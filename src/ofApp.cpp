@@ -29,13 +29,15 @@ void ofApp::setup(){
     testLight.disable();
     //testLight.enable();
     testLight.setPointLight();
+    //testLight.setAreaLight(1000, 1000);
     //testLight.setSpotlight(100,10);
-    testLight.setAmbientColor(ofFloatColor(0.2,0.2,0.2));
+    testLight.setAmbientColor(ofFloatColor(1.0,0.2,0.2));
+    
     //testLight.setAttenuation(1.0,1.0,1.0);
     //testLight.setDiffuseColor(ofFloatColor(0.5,0.5,0.5));
     //testLight.setSpecularColor(ofFloatColor(1,1,1));
     testLight.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
-    testLight.setSpecularColor(ofFloatColor(.8f, .8f, .9f));
+    testLight.setSpecularColor(ofFloatColor(.8f, .8f, .0f));
     
     
     testLight.setPosition(200,200,0);
@@ -94,18 +96,23 @@ void ofApp::draw(){
     ofBackground(0,0,0);
     camera.begin();
     
-    if(b_TestLight)testLight.enable();
+    if(b_TestLight){
+        testLight.enable();
+    }else{
+        testLight.disable();
+    }
     
-    if(!b_TestLight)materialPlane.begin();
+    
+    materialPlane.begin();
 	
     plane.draw();
-    ofDrawBox(1000, 0, 0, 200);
+    ofDrawBox(200, 0, 0, 200);
 
     
 	//ofDrawSphere(0,-300,0,10000);
-	if(!b_TestLight)materialPlane.end();
+	materialPlane.end();
 	if(!b_TestLight)areaLight.draw();
-    //if(b_TestLight)testLight.draw();
+    if(b_TestLight)testLight.draw();
     camera.end();
 }
 
