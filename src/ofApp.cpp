@@ -40,7 +40,7 @@ void ofApp::setup(){
     testLight.setSpecularColor(ofFloatColor(.8f, .8f, .0f));
     
     
-    testLight.setPosition(200,200,0);
+    testLight.setPosition(0,0,0);
     //testLight.lookAt(ofVec3f(0,0,0));
     
     
@@ -84,11 +84,38 @@ void ofApp::setup(){
 	camera.setFarClip(20000);
     camera.setPosition(0, -1000, 300);
     camera.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
+    
+    
+    
+    ofxObjectMirror bufMirror;
+    bufMirror.setPos(45, 0, 200);
+    //bufMirror.setAngle(45, 0);
+    bufMirror.setNormalVec(ofVec3f(1.0,-2.0,0));
+    v_ObjectMirror.push_back(bufMirror);
+    ofxObjectMirror bufMirror2;
+    bufMirror2.setPos(-45, 0, 200);
+    //bufMirror2.setNormalVec(ofVec3f(-2,0,-7));
+    bufMirror2.setAngle(90, 70);
+    v_ObjectMirror.push_back(bufMirror2);
+    ofxObjectMirror bufMirror3;
+    bufMirror3.setPos(0, 20, 200);
+    bufMirror3.setNormalVec(ofVec3f(0,0,1.0));
+    //bufMirror3.setAngle(0, 90);
+    v_ObjectMirror.push_back(bufMirror3);
+    //ofSetCircleResolution(30);
+    ofSetCylinderResolution(24, 1);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	//areaLight.setPosition(0,-200,0);
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
+        cout << i << endl;
+        v_ObjectMirror[i].update();
+        v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
+    }
+    //cout<<atan(1.0)/PI<<endl;
+    //cout<<atan(-2.0)/PI<<endl;
 }
 
 //--------------------------------------------------------------
@@ -98,15 +125,22 @@ void ofApp::draw(){
     
     if(b_TestLight){
         testLight.enable();
+        areaLight.disable();
     }else{
         testLight.disable();
+        areaLight.enable();
     }
     
     
     materialPlane.begin();
 	
-    plane.draw();
-    ofDrawBox(200, 0, 0, 200);
+    //plane.draw();
+    //ofDrawBox(200, 0, 0, 200);
+
+    
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
+        v_ObjectMirror[i].draw();
+    }
 
     
 	//ofDrawSphere(0,-300,0,10000);
