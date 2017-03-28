@@ -8,6 +8,9 @@
 
 #include "ofMain.h"
 
+#define MIRROR_RADIUS 200
+
+
 class ofxObjectMirror{
 public:
     ofxObjectMirror();
@@ -15,6 +18,9 @@ public:
     void set(string s);
     void update();
     void draw();
+    void drawNorm();
+    void drawLineTo(ofVec3f _pos);
+    void drawLineDir(ofVec3f _direction);
     void setPos(float _f_Pan,float _f_Tilt,float _f_Distance);
     ofVec3f getPos();
     void setAngle(float _f_Pan,float _f_Tilt);
@@ -38,9 +44,10 @@ private:
     float f_AnglePan;
     float f_AngleTilt;
     ofVec3f vf_NormalVec;
-    float f_PosX;
-    float f_PosY;
-    float f_PosZ;
+    ofVec3f vf_Pos;
+    //float f_PosX;
+    //float f_PosY;
+    //float f_PosZ;
 };
 
 

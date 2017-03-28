@@ -9,9 +9,10 @@ ofxObjectMirror::ofxObjectMirror(){
     f_AnglePan = 0;
     f_AngleTilt = 0;
     vf_NormalVec = ofVec3f(0,0,0);
-    f_PosX = 0;
-    f_PosY = 0;
-    f_PosZ = 0;
+    vf_Pos = ofVec3f(0,0,0);
+    //f_PosX = 0;
+    //f_PosY = 0;
+    //f_PosZ = 0;
 }
 //--------------------------------------------------------------
 void ofxObjectMirror::setup(){
@@ -27,26 +28,39 @@ void ofxObjectMirror::draw(){
     ofPushMatrix();
     ofPushStyle();
     ofSetColor(255, 255, 255);
-    ofTranslate(f_PosX, f_PosY, f_PosZ);
+    ofTranslate(vf_Pos);
     ofRotateZ(-f_AnglePan);
     ofRotateX(f_AngleTilt);
     //ofDrawCircle(0,0,0,40);
-    ofDrawCylinder(0, 0, 0, 40, 0.1);
+    ofDrawCylinder(0, 0, 0, MIRROR_RADIUS, 1);
     ofPopStyle();
     ofPopMatrix();
 }
+//--------------------------------------------------------------
+void ofxObjectMirror::drawNorm(){
+    drawLineDir(vf_NormalVec*MIRROR_RADIUS);
+}
+
+void ofxObjectMirror::drawLineTo(ofVec3f _pos){
+    ofDrawLine(vf_Pos, _pos);
+}
+
+void ofxObjectMirror::drawLineDir(ofVec3f _direction){
+    ofDrawLine(vf_Pos, vf_Pos+_direction);
+}
+
 //--------------------------------------------------------------
 void ofxObjectMirror::setPos(float _f_Pan,float _f_Tilt,float _f_Distance){
     f_PosPan = _f_Pan;
     f_PosTilt = _f_Tilt;
     f_PosDistance = _f_Distance;
-    f_PosX = _f_Distance * cos(PI * _f_Tilt / 180.0) * sin(PI * _f_Pan / 180.0);
-    f_PosY = _f_Distance * cos(PI * _f_Tilt / 180.0) * cos(PI * _f_Pan / 180.0);
-    f_PosZ = _f_Distance * sin(PI * _f_Tilt / 180.0);
+    vf_Pos.x = _f_Distance * cos(PI * _f_Tilt / 180.0) * sin(PI * _f_Pan / 180.0);
+    vf_Pos.y = _f_Distance * cos(PI * _f_Tilt / 180.0) * cos(PI * _f_Pan / 180.0);
+    vf_Pos.z = _f_Distance * sin(PI * _f_Tilt / 180.0);
 }
 //--------------------------------------------------------------
 ofVec3f ofxObjectMirror::getPos(){
-    return ofVec3f(f_PosX, f_PosY, f_PosZ);
+    return vf_Pos;
 }
 //--------------------------------------------------------------
 void ofxObjectMirror::setAngle(float _f_Pan,float _f_Tilt){
@@ -55,6 +69,7 @@ void ofxObjectMirror::setAngle(float _f_Pan,float _f_Tilt){
 }
 //--------------------------------------------------------------
 void ofxObjectMirror::setNormalVec(ofVec3f _norm){
+    vf_NormalVec = _norm/_norm.length();
     //鏡の法線で指定
     //default (0,-1,0)
     //atan();
@@ -82,8 +97,8 @@ void ofxObjectMirror::setNormalVec(ofVec3f _norm){
 void ofxObjectMirror::setAngleBetween(ofVec3f _pos1,ofVec3f _pos2){
     //鏡の法線を定める
     ofVec3f buf1,buf2;
-    buf1 = _pos1 - ofVec3f(f_PosX,f_PosY,f_PosZ);
-    buf2 = _pos2 - ofVec3f(f_PosX,f_PosY,f_PosZ);
+    buf1 = _pos1 - vf_Pos;
+    buf2 = _pos2 - vf_Pos;
     cout<<buf1 << ":" << buf2<<endl;
     buf1 /= buf1.length();
     buf2 /= buf2.length();

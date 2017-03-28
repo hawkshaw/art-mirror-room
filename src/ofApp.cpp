@@ -31,13 +31,17 @@ void ofApp::setup(){
     testLight.setPointLight();
     //testLight.setAreaLight(1000, 1000);
     //testLight.setSpotlight(100,10);
-    testLight.setAmbientColor(ofFloatColor(1.0,0.2,0.2));
+    
+    ///testLight.setAmbientColor(ofFloatColor(1.0,0.2,0.2));
+    //testLight.setAmbientColor(ofFloatColor(0,0,0));
     
     //testLight.setAttenuation(1.0,1.0,1.0);
     //testLight.setDiffuseColor(ofFloatColor(0.5,0.5,0.5));
     //testLight.setSpecularColor(ofFloatColor(1,1,1));
-    testLight.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
-    testLight.setSpecularColor(ofFloatColor(.8f, .8f, .0f));
+    
+    ///testLight.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
+    //testLight.setDiffuseColor( ofFloatColor(0,0,0));
+    testLight.setSpecularColor(ofFloatColor(1.0f, 0.0f, 0.0f));
     
     
     testLight.setPosition(0,0,0);
@@ -88,17 +92,17 @@ void ofApp::setup(){
     
     
     ofxObjectMirror bufMirror;
-    bufMirror.setPos(45, 0, 200);
+    bufMirror.setPos(45, 0, 400);
     //bufMirror.setAngle(45, 0);
     bufMirror.setNormalVec(ofVec3f(1.0,-2.0,0));
     v_ObjectMirror.push_back(bufMirror);
     ofxObjectMirror bufMirror2;
-    bufMirror2.setPos(-45, 0, 200);
+    bufMirror2.setPos(-45, 0, 400);
     //bufMirror2.setNormalVec(ofVec3f(-2,0,-7));
     bufMirror2.setAngle(90, 70);
     v_ObjectMirror.push_back(bufMirror2);
     ofxObjectMirror bufMirror3;
-    bufMirror3.setPos(0, 20, 200);
+    bufMirror3.setPos(0, 20, 400);
     bufMirror3.setNormalVec(ofVec3f(0,0,1.0));
     //bufMirror3.setAngle(0, 90);
     v_ObjectMirror.push_back(bufMirror3);
@@ -113,6 +117,7 @@ void ofApp::update(){
         cout << i << endl;
         v_ObjectMirror[i].update();
         v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
+        //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
     //cout<<atan(1.0)/PI<<endl;
     //cout<<atan(-2.0)/PI<<endl;
@@ -147,6 +152,15 @@ void ofApp::draw(){
 	materialPlane.end();
 	if(!b_TestLight)areaLight.draw();
     if(b_TestLight)testLight.draw();
+
+    ofSetColor(255, 255, 255);
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
+        v_ObjectMirror[i].drawLineTo(testLight.getPosition());
+        v_ObjectMirror[i].drawLineTo(camera.getPosition());
+        v_ObjectMirror[i].drawNorm();
+    }
+
+    
     camera.end();
 }
 
