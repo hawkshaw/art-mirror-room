@@ -44,24 +44,24 @@ void ofApp::setup(){
     testLight.setSpecularColor(ofFloatColor(1.0f, 0.0f, 0.0f));
     
     
-    testLight.setPosition(0,0,0);
+    testLight.setPosition(200,0,0);
     //testLight.lookAt(ofVec3f(0,0,0));
     
     
 	areaLight.setup();
 	areaLight.enable();
-	areaLight.setAreaLight(10,10);
+	//areaLight.setAreaLight(10,10);
 	//areaLight.setSpotlight(15,1000000);
-    areaLight.setSpotlight(5,0);
+    //areaLight.setSpotlight(5,0);
+    areaLight.setSpotlight(150,10);
     
     areaLight.setAmbientColor(ofFloatColor(0,0,0));
 	//areaLight.setAttenuation(1.0,1.0,1.0);
-	areaLight.setDiffuseColor(ofFloatColor(0,0,0));
+	areaLight.setDiffuseColor(ofFloatColor(0.3,0.3,0.3));
 	areaLight.setSpecularColor(ofFloatColor(1,1,1));
 	//areaLight.rotate(-90,ofVec3f(1,0,0));
 	//areaLight.rotate(30,ofVec3f(0,0,1));
-	areaLight.setPosition(0,200,0);
-    areaLight.lookAt(ofVec3f(0,0,0));
+	areaLight.setPosition(0,-500,0);
     
 	ofBackground(0);
 	
@@ -73,8 +73,8 @@ void ofApp::setup(){
 	plane.rotate(-90,ofVec3f(1,0,0));
 	plane.move(ofVec3f(0,-300,0));
 	
-    materialPlane.setAmbientColor(ofFloatColor(0,0,0,1.0));
-	materialPlane.setDiffuseColor(ofFloatColor(0.8,0.8,0.8,1.0));
+    //materialPlane.setAmbientColor(ofFloatColor(0,0,0,1.0));
+	//materialPlane.setDiffuseColor(ofFloatColor(0.8,0.8,0.8,1.0));
     
     
     //materialPlane.setAmbientColor(ofFloatColor(1.0,1.0,1.0,1.0));
@@ -89,7 +89,9 @@ void ofApp::setup(){
     camera.setPosition(0, -1000, 300);
     camera.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
     
-    
+    cam.setPosition(-1000, -00, 700);
+    cam.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
+    cam.setFov(100);
     
     ofxObjectMirror bufMirror;
     bufMirror.setPos(45, 0, 400);
@@ -97,7 +99,7 @@ void ofApp::setup(){
     bufMirror.setNormalVec(ofVec3f(1.0,-2.0,0));
     v_ObjectMirror.push_back(bufMirror);
     ofxObjectMirror bufMirror2;
-    bufMirror2.setPos(-45, 0, 400);
+    bufMirror2.setPos(-65, 0, 400);
     //bufMirror2.setNormalVec(ofVec3f(-2,0,-7));
     bufMirror2.setAngle(90, 70);
     v_ObjectMirror.push_back(bufMirror2);
@@ -108,6 +110,9 @@ void ofApp::setup(){
     v_ObjectMirror.push_back(bufMirror3);
     //ofSetCircleResolution(30);
     ofSetCylinderResolution(24, 1);
+    
+    areaLight.lookAt(bufMirror3.getPos());
+
 }
 
 //--------------------------------------------------------------
@@ -116,7 +121,8 @@ void ofApp::update(){
     for(int i = 0; i<v_ObjectMirror.size(); i++){
         cout << i << endl;
         v_ObjectMirror[i].update();
-        v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
+        //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
+        v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), cam.getPosition());
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
     //cout<<atan(1.0)/PI<<endl;
@@ -126,7 +132,9 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0,0,0);
+    
     camera.begin();
+    //cam.begin();
     
     if(b_TestLight){
         testLight.enable();
@@ -140,7 +148,7 @@ void ofApp::draw(){
     materialPlane.begin();
 	
     //plane.draw();
-    //ofDrawBox(200, 0, 0, 200);
+    //ofDrawBox(-200, 0, 0, 200);
 
     
     for(int i = 0; i<v_ObjectMirror.size(); i++){
@@ -155,12 +163,18 @@ void ofApp::draw(){
 
     ofSetColor(255, 255, 255);
     for(int i = 0; i<v_ObjectMirror.size(); i++){
-        v_ObjectMirror[i].drawLineTo(testLight.getPosition());
-        v_ObjectMirror[i].drawLineTo(camera.getPosition());
+        //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
+        //v_ObjectMirror[i].drawLineTo(camera.getPosition());
+        v_ObjectMirror[i].drawLineTo(cam.getPosition());
+        v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
         v_ObjectMirror[i].drawNorm();
+        ofVec3f test;
+        test =v_ObjectMirror[i].getNorm();
+        v_ObjectMirror[i].drawLineDir(ofVec3f(test.y*200,-test.x*200,0));
+        v_ObjectMirror[i].drawLineDir(ofVec3f(0,-test.z*200,test.y*200));
     }
 
-    
+    //cam.end();
     camera.end();
 }
 
@@ -171,10 +185,10 @@ void ofApp::keyPressed(int key){
             b_TestLight = !b_TestLight;
             break;
         case OF_KEY_UP:
-            areaLight.move(0,10,0);
+            testLight.move(20,0,0);
             break;
         case OF_KEY_DOWN:
-            areaLight.move(0,-10,0);
+            testLight.move(-20,0,0);
             break;
         case OF_KEY_LEFT:
             areaLight.rotate(1,0,0,1);

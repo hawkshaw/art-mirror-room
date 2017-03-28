@@ -63,6 +63,10 @@ ofVec3f ofxObjectMirror::getPos(){
     return vf_Pos;
 }
 //--------------------------------------------------------------
+ofVec3f ofxObjectMirror::getNorm(){
+    return vf_NormalVec;
+}
+//--------------------------------------------------------------
 void ofxObjectMirror::setAngle(float _f_Pan,float _f_Tilt){
     f_AnglePan = _f_Pan;
     f_AngleTilt = _f_Tilt;

@@ -29,6 +29,7 @@ class ofApp : public ofBaseApp{
 		ofLight areaLight;
 		ofPlanePrimitive plane;
 		ofEasyCam camera;
+    ofCamera cam;
 		ofMaterial materialPlane;
     
         vector<ofxObjectMirror> v_ObjectMirror;
