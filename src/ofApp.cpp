@@ -89,9 +89,13 @@ void ofApp::setup(){
 	materialPlane.setShininess(10000);
     
 	camera.setFarClip(20000);
+    
+    camera.enableOrtho();//important!!
+    
     camera.setPosition(0, -1000, 300);
     camera.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
     
+    cam.enableOrtho();
     cam.setPosition(-1000, -00, 700);
     cam.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
     cam.setFov(100);
@@ -116,17 +120,32 @@ void ofApp::setup(){
     
     areaLight.lookAt(bufMirror3.getPos());
 
+    /*
+    //ofBlur
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    //blur.setup(ofGetWidth(), ofGetHeight(), 32, .2, 1, 0.5);
+    blur.setup(ofGetWidth(), ofGetHeight(), 32, .6, 4, 5);
+    fbo.allocate(ofGetWidth(), ofGetHeight());
+    */
+    
+    
+    myFbo.allocate(512, 512,GL_RGB);
+    myGlitch.setup(&myFbo);
+    myGlitch.setFx(OFXPOSTGLITCH_GLOW			, true);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	//areaLight.setPosition(0,-200,0);
     for(int i = 0; i<v_ObjectMirror.size(); i++){
-        cout << i << endl;
+        //cout << i << endl;
         v_ObjectMirror[i].update();
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
-        v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), cam.getPosition());
-        //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
+        //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), cam.getPosition());
+        //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), camera.getPosition());
+        //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), ofVec3f(-1000, -00, 700));
+        v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
     //cout<<atan(1.0)/PI<<endl;
     //cout<<atan(-2.0)/PI<<endl;
@@ -134,10 +153,17 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(0,0,0);
+    //fbo.begin();
     
+    ofBackground(0,0,0);
+
     camera.begin();
     //cam.begin();
+
+
+
+    
+    
     
     if(b_TestLight){
         testLight.enable();
@@ -163,21 +189,56 @@ void ofApp::draw(){
 	if(!b_TestLight)areaLight.draw();
     if(b_TestLight)testLight.draw();
 
-    ofSetColor(255, 255, 255);
+    ofSetColor(200, 200, 200);
     for(int i = 0; i<v_ObjectMirror.size(); i++){
-        //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
+        v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(camera.getPosition());
-        v_ObjectMirror[i].drawLineTo(cam.getPosition());
+        //v_ObjectMirror[i].drawLineTo(cam.getPosition());
         v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
+        v_ObjectMirror[i].drawLineTo(v_ObjectMirror[i].getMirrorPos(areaLight.getPosition()));
         v_ObjectMirror[i].drawNorm();
         ofVec3f test;
         test =v_ObjectMirror[i].getNorm();
-        v_ObjectMirror[i].drawLineDir(ofVec3f(test.y*200,-test.x*200,0));
-        v_ObjectMirror[i].drawLineDir(ofVec3f(0,-test.z*200,test.y*200));
+        v_ObjectMirror[i].drawLineDir(ofVec3f(test.y*MIRROR_RADIUS*2,-test.x*MIRROR_RADIUS*2,0));
+        v_ObjectMirror[i].drawLineDir(ofVec3f(0,-test.z*MIRROR_RADIUS*2,test.y*MIRROR_RADIUS*2));
     }
 
+    
+    
+    
     //cam.end();
     camera.end();
+
+    
+    myFbo.begin();
+    ofBackground(255,0,0);
+    ofSetColor(255,255,255);
+    ofDrawRectangle(200, 200, 200, 200);
+    myFbo.end();
+    
+    /* Apply effects */
+    myGlitch.generateFx();
+    
+    /* draw effected view */
+    //ofSetColor(255);
+    myFbo.draw(512, 0);
+    /*
+    
+    fbo.end();
+    
+    blur.begin();
+    ofDisableBlendMode();
+    ofBackground(0);
+    fbo.draw(0,0);
+    blur.end();
+    
+    blur.draw();
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    //fbo.draw(0,0);
+*/
+    
+    
+
 }
 
 //--------------------------------------------------------------
@@ -185,6 +246,9 @@ void ofApp::keyPressed(int key){
 	switch(key){
         case 't':
             b_TestLight = !b_TestLight;
+            break;
+        case 'f':
+            ofToggleFullscreen();
             break;
         case OF_KEY_UP:
             testLight.move(20,0,0);

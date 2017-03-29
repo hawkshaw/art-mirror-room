@@ -2,7 +2,12 @@
 
 #include "ofMain.h"
 #include "ofxObjectMirror.h"
+#include "ofxBlur.h"
+#include "ofxPostGlitch.h"
 
+
+#define NUM 500
+#define SIZE 10
 
 class ofApp : public ofBaseApp{
 
@@ -29,10 +34,16 @@ class ofApp : public ofBaseApp{
 		ofLight areaLight;
 		ofPlanePrimitive plane;
 		ofEasyCam camera;
-    ofCamera cam;
+        ofCamera cam;
 		ofMaterial materialPlane;
     
     int i_test;
     
         vector<ofxObjectMirror> v_ObjectMirror;
+    
+    ofxBlur blur;
+    ofFbo fbo;
+    	ofxPostGlitch	myGlitch;
+    ofFbo			myFbo;
+
 };

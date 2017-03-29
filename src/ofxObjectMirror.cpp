@@ -63,6 +63,13 @@ ofVec3f ofxObjectMirror::getPos(){
     return vf_Pos;
 }
 //--------------------------------------------------------------
+ofVec3f ofxObjectMirror::getMirrorPos(ofVec3f _pos){
+    float distance;
+    distance = vf_NormalVec.x * (_pos.x  - vf_Pos.x) + vf_NormalVec.y * (_pos.y  - vf_Pos.y) + vf_NormalVec.z  * ( _pos.z - vf_Pos.z);
+    return _pos - 2 * distance * vf_NormalVec;
+}
+
+//--------------------------------------------------------------
 ofVec3f ofxObjectMirror::getNorm(){
     return vf_NormalVec;
 }
@@ -95,7 +102,7 @@ void ofxObjectMirror::setNormalVec(ofVec3f _norm){
     }else{
         f_AngleTilt = 180.0 * atan(_norm.z / ofVec2f(_norm.x,_norm.y).length()) / PI;
     }
-    cout << "set" << f_AnglePan << " " << f_AngleTilt << endl;
+    //cout << "set" << f_AnglePan << " " << f_AngleTilt << endl;
 }
 //--------------------------------------------------------------
 void ofxObjectMirror::setAngleBetween(ofVec3f _pos1,ofVec3f _pos2){
@@ -103,9 +110,9 @@ void ofxObjectMirror::setAngleBetween(ofVec3f _pos1,ofVec3f _pos2){
     ofVec3f buf1,buf2;
     buf1 = _pos1 - vf_Pos;
     buf2 = _pos2 - vf_Pos;
-    cout<<buf1 << ":" << buf2<<endl;
+    //cout<<buf1 << ":" << buf2<<endl;
     buf1 /= buf1.length();
     buf2 /= buf2.length();
-    cout<<buf1 << ":" << buf2<<endl;
+    //cout<<buf1 << ":" << buf2<<endl;
     setNormalVec(buf1 + buf2);
 }
