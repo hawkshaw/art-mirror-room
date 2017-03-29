@@ -18,6 +18,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    
+    i_test = 0;
+    
     b_TestLight = false;
     
 	ofEnableLighting();
@@ -150,11 +153,10 @@ void ofApp::draw(){
     //plane.draw();
     //ofDrawBox(-200, 0, 0, 200);
 
-    
     for(int i = 0; i<v_ObjectMirror.size(); i++){
         v_ObjectMirror[i].draw();
     }
-
+	
     
 	//ofDrawSphere(0,-300,0,10000);
 	materialPlane.end();
@@ -195,6 +197,12 @@ void ofApp::keyPressed(int key){
             break;
         case OF_KEY_RIGHT:
             areaLight.rotate(-1,0,0,1);
+            break;
+        case 'l':
+            i_test += 5;
+            break;
+        case 'r':
+            i_test -= 5;
             break;
 	}
 }

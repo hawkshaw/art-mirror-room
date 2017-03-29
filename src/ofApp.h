@@ -32,5 +32,7 @@ class ofApp : public ofBaseApp{
     ofCamera cam;
 		ofMaterial materialPlane;
     
+    int i_test;
+    
         vector<ofxObjectMirror> v_ObjectMirror;
 };
