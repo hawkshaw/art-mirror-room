@@ -6,8 +6,15 @@
 #include "ofxPostGlitch.h"
 
 
+#define MIR_X_NUM 5
+#define MIR_X_ANG 9
+#define MIR_Y_NUM 5
+#define MIR_Y_ANG 9
+
 #define NUM 500
 #define SIZE 10
+
+#define RADIUS 700
 
 class ofApp : public ofBaseApp{
 
@@ -45,5 +52,6 @@ class ofApp : public ofBaseApp{
     ofFbo fbo;
     	ofxPostGlitch	myGlitch;
     ofFbo			myFbo;
-
+    
+    bool b_Camera;
 };
