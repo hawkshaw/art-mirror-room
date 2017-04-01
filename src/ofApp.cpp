@@ -18,7 +18,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    b_Camera = false;
+    //b_Camera = false;
+    i_Camera = 0;
     i_test = 0;
     
     b_TestLight = false;
@@ -47,7 +48,7 @@ void ofApp::setup(){
     testLight.setSpecularColor(ofFloatColor(1.0f, 0.0f, 0.0f));
     
     
-    testLight.setPosition(200,-400,0);
+    testLight.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
     //testLight.lookAt(ofVec3f(0,0,0));
     
     
@@ -68,7 +69,7 @@ void ofApp::setup(){
     areaLight.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
 	ofBackground(0);
 	
-
+    
     //plane.set(400,400,2,2);
     //plane.move(ofVec3f(100,300,0));
     
@@ -89,18 +90,31 @@ void ofApp::setup(){
 	materialPlane.setShininess(10000);
     
 	camera.setFarClip(20000);
+    //camera.disableOrtho();
+    //camera.enableOrtho();//important!!
+    //camera.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
+    camera.setPosition(0, 0,0);
+    camera.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
+    camera.setFov(70);
     
-    camera.enableOrtho();//important!!
     
-    camera.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
-    camera.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
-    camera.setFov(100);
+    camera2.setFarClip(20000);
+    //camera.disableOrtho();
+    //camera2.enableOrtho();//important!!
+    
+    camera2.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
+    camera2.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
+    camera2.setFov(50);
+    
     
     cam.enableOrtho();
-    cam.setPosition(-500, -500, 0);
-    cam.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
-    cam.setFov(100);
-    
+    cam.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0), 0);
+    cam.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
+    cam.setFov(50);
+    cam.setNearClip(0);
+    cam.setFarClip(10000);
+    //cam.setScale(0.3*3, 0.2*3, 1.0);
+    //cam.setScale(3, 2, 10);
     
     for(int i = -MIR_X_NUM ;i<=MIR_X_NUM ;i++){
         for(int j = 0 ;j<=MIR_Y_NUM ;j++){
@@ -138,18 +152,24 @@ void ofApp::update(){
         //cout << i << endl;
         v_ObjectMirror[i].update();
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
-        v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), testLight.getPosition() );
+        //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), testLight.getPosition() );
+        
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), camera.getPosition());
+        v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()+ofVec3f(0,-200,0));
+        
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), ofVec3f(-1000, -00, 700));
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
     //cout<<atan(1.0)/PI<<endl;
     //cout<<atan(-2.0)/PI<<endl;
-    cam.setPosition(testLight.getPosition()+ 2*cam.getLookAtDir()*cam.getImagePlaneDistance());
-    cout<< "pos"<<cam.getLookAtDir() <<endl;
-    cout<< "gpos"<<cam.getPosition() + cam.getLookAtDir()*cam.getImagePlaneDistance() <<endl;
-
-
+    //cam.setPosition(testLight.getPosition()+ 2*cam.getLookAtDir()*cam.getImagePlaneDistance());
+    cout<< "look dir"<<cam.getLookAtDir() <<endl;
+    cout<< "cam gpos"<<cam.getPosition() <<endl;
+    cout<< "camera gpos"<<camera.getPosition() <<endl;
+    cout<< "camera2 gpos"<<camera2.getPosition() <<endl;
+    cout<<"dist cam"<<camera.getDistance()<<endl;
+    camera.setDistance(1.0);
+    
 }
 
 //--------------------------------------------------------------
@@ -158,9 +178,20 @@ void ofApp::draw(){
     
     ofBackground(0,0,0);
 
-    if(!b_Camera)camera.begin();
-    if(b_Camera)cam.begin();
+    //if(!b_Camera)camera.begin();
+    //if(b_Camera)cam.begin();
 
+    switch(i_Camera){
+        case 0:
+            camera.begin();
+            break;
+        case 1:
+            camera2.begin();
+            break;
+        case 2:
+            cam.begin();
+            break;
+    }
 
 
     
@@ -193,9 +224,9 @@ void ofApp::draw(){
     ofSetColor(200, 200, 200);
     for(int i = 0; i<v_ObjectMirror.size(); i++){
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
-        v_ObjectMirror[i].drawLineTo(testLight.getPosition());
+        //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         
-        //v_ObjectMirror[i].drawLineTo(camera.getPosition());
+        v_ObjectMirror[i].drawLineTo(camera.getPosition());
         //v_ObjectMirror[i].drawLineTo(cam.getPosition());
         v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
         v_ObjectMirror[i].drawLineTo(v_ObjectMirror[i].getMirrorPos(areaLight.getPosition()));
@@ -207,19 +238,68 @@ void ofApp::draw(){
     }
 
     
-    cam.draw();
+    if(i_Camera!=2)cam.draw();
+    
     
     ofPushStyle();
-    ofNoFill();
+    ofPushMatrix();
+    ofDisableLighting();
+    ofSetColor(255,0,0);
     ofMatrix4x4 inverseCameraMatrix;
     inverseCameraMatrix.makeInvertOf(cam.getModelViewProjectionMatrix());
     ofMultMatrix( inverseCameraMatrix );
-    cout<<inverseCameraMatrix<<endl;
-    
+    ofPoint scale2(0.9,0.9,0.9);
+    ofScale(scale2);
+    ofNoFill();
+    ofDrawBox(0, 0, 0, 2.0f);
+    ofEnableLighting();
+    ofPopMatrix();
     ofPopStyle();
+
+    ofPushStyle();
+    ofPushMatrix();
+    ofDisableLighting();
+    ofSetColor(255,0,0);
+    ofMatrix4x4 inverseCameraMatrix2;
+    inverseCameraMatrix2.makeInvertOf(camera.getModelViewProjectionMatrix());
+    ofMultMatrix( inverseCameraMatrix2 );
+    ofPoint scale3(0.9,0.9,0.9);
+    ofScale(scale3);
+    ofNoFill();
+    ofDrawBox(0, 0, 0, 2.0f);
+    ofEnableLighting();
+    ofPopMatrix();
+    ofPopStyle();
+
+    ofPushStyle();
+    ofPushMatrix();
+    ofDisableLighting();
+    ofSetColor(255,0,0);
+    ofMatrix4x4 inverseCameraMatrix3;
+    inverseCameraMatrix3.makeInvertOf(camera2.getModelViewProjectionMatrix());
+    ofMultMatrix( inverseCameraMatrix3 );
+    ofPoint scale4(0.9,0.9,0.9);
+    ofScale(scale4);
+    ofNoFill();
+    ofDrawBox(0, 0, 0, 2.0f);
+    ofEnableLighting();
+    ofPopMatrix();
+    ofPopStyle();
+
     
-    if(b_Camera)cam.end();
-    if(!b_Camera)camera.end();
+    //if(b_Camera)cam.end();
+    //if(!b_Camera)camera.end();
+    switch(i_Camera){
+        case 0:
+            camera.end();
+            break;
+        case 1:
+            camera2.end();
+            break;
+        case 2:
+            cam.end();
+            break;
+    }
 
     
     myFbo.begin();
@@ -233,7 +313,7 @@ void ofApp::draw(){
     
     /* draw effected view */
     //ofSetColor(255);
-    myFbo.draw(512, 0);
+    //myFbo.draw(512, 0);
     /*
     
     fbo.end();
@@ -263,16 +343,26 @@ void ofApp::keyPressed(int key){
             ofToggleFullscreen();
             break;
         case OF_KEY_UP:
-            testLight.move(20,0,0);
+            //testLight.move(20,0,0);
+            //cam.move(0, 100, 0);
+            camera.move(0, 100, 0);
+            cam.rotate(1, ofVec3f(0, 0,1));
             break;
         case OF_KEY_DOWN:
-            testLight.move(-20,0,0);
+            //testLight.move(-20,0,0);
+            //cam.move(0, -100, 0);
+            camera.move(0, -100, 0);
+            cam.rotate(-1, ofVec3f(0, 0,1));
             break;
         case OF_KEY_LEFT:
-            areaLight.rotate(1,0,0,1);
+            //areaLight.rotate(1,0,0,1);
+            camera.move(-100, 0, 0);
+            cam.move(-100, 0, 0);
             break;
         case OF_KEY_RIGHT:
-            areaLight.rotate(-1,0,0,1);
+            //areaLight.rotate(-1,0,0,1);
+            camera.move(100, 0, 0);
+            cam.move(100, 0, 0);
             break;
         case 'l':
             i_test += 5;
@@ -281,7 +371,8 @@ void ofApp::keyPressed(int key){
             i_test -= 5;
             break;
         case 'c':
-            b_Camera = !b_Camera;
+            //b_Camera = !b_Camera;
+            i_Camera = (i_Camera +1)%3;
             break;
 	}
 }

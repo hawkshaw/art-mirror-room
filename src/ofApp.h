@@ -40,7 +40,9 @@ class ofApp : public ofBaseApp{
     
 		ofLight areaLight;
 		ofPlanePrimitive plane;
-		ofEasyCam camera;
+    
+    ofEasyCam camera2;
+    ofEasyCam camera;
         ofCamera cam;
 		ofMaterial materialPlane;
     
@@ -53,5 +55,6 @@ class ofApp : public ofBaseApp{
     	ofxPostGlitch	myGlitch;
     ofFbo			myFbo;
     
-    bool b_Camera;
+    //bool b_Camera;
+    int i_Camera;
 };
