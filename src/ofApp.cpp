@@ -19,6 +19,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     //b_Camera = false;
+    b_Render = false;
     i_Camera = 0;
     i_test = 0;
     
@@ -28,80 +29,84 @@ void ofApp::setup(){
 	ofEnableDepthTest();
     
     ofSetSmoothLighting(true);
-    
+
     testLight.setup();
     testLight.disable();
-    //testLight.enable();
     testLight.setPointLight();
     //testLight.setAreaLight(1000, 1000);
     //testLight.setSpotlight(100,10);
     
     ///testLight.setAmbientColor(ofFloatColor(1.0,0.2,0.2));
-    //testLight.setAmbientColor(ofFloatColor(0,0,0));
-    
     //testLight.setAttenuation(1.0,1.0,1.0);
     //testLight.setDiffuseColor(ofFloatColor(0.5,0.5,0.5));
-    //testLight.setSpecularColor(ofFloatColor(1,1,1));
-    
-    ///testLight.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
-    //testLight.setDiffuseColor( ofFloatColor(0,0,0));
     testLight.setSpecularColor(ofFloatColor(1.0f, 0.0f, 0.0f));
-    
-    
     testLight.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
     //testLight.lookAt(ofVec3f(0,0,0));
     
     
 	areaLight.setup();
 	areaLight.enable();
-	//areaLight.setAreaLight(10,10);
 	//areaLight.setSpotlight(15,1000000);
     //areaLight.setSpotlight(5,0);
     areaLight.setSpotlight(180,1);
     
     areaLight.setAmbientColor(ofFloatColor(0,0,0));
 	//areaLight.setAttenuation(1.0,1.0,1.0);
-	areaLight.setDiffuseColor(ofFloatColor(0.1,0.1,0.1));
-	areaLight.setSpecularColor(ofFloatColor(1,1,1));
-	//areaLight.rotate(-90,ofVec3f(1,0,0));
-	//areaLight.rotate(30,ofVec3f(0,0,1));
+	areaLight.setDiffuseColor(ofFloatColor(0.01,0.01,0.01));
+    //areaLight.setDiffuseColor(ofFloatColor(0.0,0.0,0.0));
+    areaLight.setSpecularColor(ofFloatColor(1,1,1));
 	areaLight.setPosition(0,-RADIUS,0);
     areaLight.lookAt(ofVec3f(0,0,0), ofVec3f(0,0,1));
-	ofBackground(0);
 	
-    
-    //plane.set(400,400,2,2);
-    //plane.move(ofVec3f(100,300,0));
-    
     plane.set(400,400,2,2);
 	plane.rotate(-90,ofVec3f(1,0,0));
 	plane.move(ofVec3f(0,-300,0));
 	
     //materialPlane.setAmbientColor(ofFloatColor(0,0,0,1.0));
 	//materialPlane.setDiffuseColor(ofFloatColor(0.8,0.8,0.8,1.0));
-    
-    
-    //materialPlane.setAmbientColor(ofFloatColor(1.0,1.0,1.0,1.0));
-    //materialPlane.setDiffuseColor(ofFloatColor(1.0,1.0,1.0,1.0));
-    //materialPlane.setAmbientColor(ofFloatColor(0.00,0.0,0.00,1.0));
-    //materialPlane.setDiffuseColor(ofFloatColor(0.00,0.0,0.00,1.0));
-    //materialPlane.setSpecularColor(ofFloatColor(0.8,0.8,0.8,1.0));
 	materialPlane.setSpecularColor(ofFloatColor(1.0,1.0,1.0,1.0));
-	materialPlane.setShininess(10000);
+	materialPlane.setShininess(100000);
+    
+    {
+        ofEasyCam camBuf;
+        camBuf.setFarClip(20000);
+        camBuf.setPosition(0, 0,0);
+        camBuf.setDistance(1.0);
+        camBuf.move(-100, 100, 0);
+        camBuf.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
+        camBuf.setFov(70);
+        v_Camera.push_back(camBuf);
+    }
+    {
+        ofEasyCam camBuf;
+        camBuf.setFarClip(20000);
+        camBuf.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
+        camBuf.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
+        camBuf.setFov(50);
+        v_Camera.push_back(camBuf);
+    }
+    {
+        ofEasyCam camBuf;
+        camBuf.enableOrtho();
+        camBuf.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
+        camBuf.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
+        camBuf.setFov(50);
+        camBuf.setNearClip(0);
+        camBuf.setFarClip(10000);
+        v_Camera.push_back(camBuf);
+    }
+
+    
     
 	camera.setFarClip(20000);
-    //camera.disableOrtho();
-    //camera.enableOrtho();//important!!
-    //camera.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
     camera.setPosition(0, 0,0);
+    camera.setDistance(1.0);
+    camera.move(100, 100, 0);
     camera.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
     camera.setFov(70);
     
     
     camera2.setFarClip(20000);
-    //camera.disableOrtho();
-    //camera2.enableOrtho();//important!!
-    
     camera2.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
     camera2.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
     camera2.setFov(50);
@@ -155,8 +160,14 @@ void ofApp::update(){
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), testLight.getPosition() );
         
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), camera.getPosition());
-        v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()+ofVec3f(0,-200,0));
+        //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()+ofVec3f(0,-200,0));
         
+        if(b_Render){
+            v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()-v_Camera[i_Camera].getLookAtDir());
+        }else{
+            //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[i_Camera].getPosition());
+            v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[0].getPosition());
+        }
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), ofVec3f(-1000, -00, 700));
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
@@ -168,7 +179,7 @@ void ofApp::update(){
     cout<< "camera gpos"<<camera.getPosition() <<endl;
     cout<< "camera2 gpos"<<camera2.getPosition() <<endl;
     cout<<"dist cam"<<camera.getDistance()<<endl;
-    camera.setDistance(1.0);
+    //camera.setDistance(1.0);
     
 }
 
@@ -181,7 +192,9 @@ void ofApp::draw(){
     //if(!b_Camera)camera.begin();
     //if(b_Camera)cam.begin();
 
-    switch(i_Camera){
+    v_Camera[i_Camera].begin();
+    
+    /*switch(i_Camera){
         case 0:
             camera.begin();
             break;
@@ -191,7 +204,7 @@ void ofApp::draw(){
         case 2:
             cam.begin();
             break;
-    }
+    }*/
 
 
     
@@ -226,10 +239,17 @@ void ofApp::draw(){
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         
-        v_ObjectMirror[i].drawLineTo(camera.getPosition());
+        v_ObjectMirror[i].drawLineTo(v_Camera[0].getPosition());
         //v_ObjectMirror[i].drawLineTo(cam.getPosition());
         v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
-        v_ObjectMirror[i].drawLineTo(v_ObjectMirror[i].getMirrorPos(areaLight.getPosition()));
+        ofSetColor(255, 0, 0);
+        ofVec3f MirrorPos;
+        MirrorPos = v_ObjectMirror[i].getMirrorPos(areaLight.getPosition());
+        if(!b_Render){
+            v_ObjectMirror[i].drawLineTo(MirrorPos);
+            ofDrawSphere(MirrorPos, 10);
+        }
+        ofSetColor(200, 200, 200);
         v_ObjectMirror[i].drawNorm();
         ofVec3f test;
         test =v_ObjectMirror[i].getNorm();
@@ -241,55 +261,33 @@ void ofApp::draw(){
     if(i_Camera!=2)cam.draw();
     
     
-    ofPushStyle();
-    ofPushMatrix();
-    ofDisableLighting();
-    ofSetColor(255,0,0);
-    ofMatrix4x4 inverseCameraMatrix;
-    inverseCameraMatrix.makeInvertOf(cam.getModelViewProjectionMatrix());
-    ofMultMatrix( inverseCameraMatrix );
-    ofPoint scale2(0.9,0.9,0.9);
-    ofScale(scale2);
-    ofNoFill();
-    ofDrawBox(0, 0, 0, 2.0f);
-    ofEnableLighting();
-    ofPopMatrix();
-    ofPopStyle();
+    for(int i=0;i<v_Camera.size();i++){
+        ofSetColor(255,0,0);
+        ofPushStyle();
+        ofPushMatrix();
+        ofDisableLighting();
+        ofMatrix4x4 inverseCameraMatrix;
+        inverseCameraMatrix.makeInvertOf(v_Camera[i].getModelViewProjectionMatrix());
+        ofMultMatrix( inverseCameraMatrix );
+        ofPoint scale2(0.9,0.9,0.9);
+        ofScale(scale2);
+        ofNoFill();
+        ofDrawBox(0, 0, 0, 2.0f);
+        ofEnableLighting();
+        ofPopMatrix();
+        ofPopStyle();
+    }
 
-    ofPushStyle();
-    ofPushMatrix();
-    ofDisableLighting();
-    ofSetColor(255,0,0);
-    ofMatrix4x4 inverseCameraMatrix2;
-    inverseCameraMatrix2.makeInvertOf(camera.getModelViewProjectionMatrix());
-    ofMultMatrix( inverseCameraMatrix2 );
-    ofPoint scale3(0.9,0.9,0.9);
-    ofScale(scale3);
-    ofNoFill();
-    ofDrawBox(0, 0, 0, 2.0f);
-    ofEnableLighting();
-    ofPopMatrix();
-    ofPopStyle();
 
-    ofPushStyle();
-    ofPushMatrix();
-    ofDisableLighting();
-    ofSetColor(255,0,0);
-    ofMatrix4x4 inverseCameraMatrix3;
-    inverseCameraMatrix3.makeInvertOf(camera2.getModelViewProjectionMatrix());
-    ofMultMatrix( inverseCameraMatrix3 );
-    ofPoint scale4(0.9,0.9,0.9);
-    ofScale(scale4);
-    ofNoFill();
-    ofDrawBox(0, 0, 0, 2.0f);
-    ofEnableLighting();
-    ofPopMatrix();
-    ofPopStyle();
+
 
     
     //if(b_Camera)cam.end();
     //if(!b_Camera)camera.end();
-    switch(i_Camera){
+    
+    v_Camera[i_Camera].end();
+    
+    /*switch(i_Camera){
         case 0:
             camera.end();
             break;
@@ -299,7 +297,7 @@ void ofApp::draw(){
         case 2:
             cam.end();
             break;
-    }
+    }*/
 
     
     myFbo.begin();
@@ -339,6 +337,9 @@ void ofApp::keyPressed(int key){
         case 't':
             b_TestLight = !b_TestLight;
             break;
+        case 'r':
+            b_Render = !b_Render;
+            break;
         case 'f':
             ofToggleFullscreen();
             break;
@@ -367,12 +368,19 @@ void ofApp::keyPressed(int key){
         case 'l':
             i_test += 5;
             break;
-        case 'r':
+        case 'R':
             i_test -= 5;
             break;
         case 'c':
             //b_Camera = !b_Camera;
             i_Camera = (i_Camera +1)%3;
+            for(int i = 0;i<v_Camera.size();i++){
+                if(i_Camera == i){
+                    v_Camera[i].enableMouseInput();
+                }else{
+                    v_Camera[i].disableMouseInput();
+                }
+            }
             break;
 	}
 }

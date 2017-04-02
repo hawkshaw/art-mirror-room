@@ -7,9 +7,9 @@
 
 
 #define MIR_X_NUM 5
-#define MIR_X_ANG 9
+#define MIR_X_ANG 9*1.5
 #define MIR_Y_NUM 5
-#define MIR_Y_ANG 9
+#define MIR_Y_ANG 9*1.5
 
 #define NUM 500
 #define SIZE 10
@@ -57,4 +57,7 @@ class ofApp : public ofBaseApp{
     
     //bool b_Camera;
     int i_Camera;
+    bool b_Render;
+    
+    vector<ofEasyCam> v_Camera;
 };
