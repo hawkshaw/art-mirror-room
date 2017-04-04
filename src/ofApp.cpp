@@ -129,6 +129,21 @@ void ofApp::setup(){
         }
     }
     
+    for(int i = -MIR_X_NUM ;i<=MIR_X_NUM/2 ;i++){
+        for(int j = 1 ;j<=MIR_Y_NUM/2 ;j++){
+            ofxObjectHuman bufHuman;
+            bufHuman.setPos(180+i*MIR_X_ANG, -j*MIR_Y_ANG, RADIUS);
+            v_ObjectHuman.push_back(bufHuman);
+        }
+    }
+
+    for(int i = -MIR_X_NUM ;i<=MIR_X_NUM/2 ;i++){
+        for(int j = 0 ;j<=MIR_Y_NUM/2 ;j++){
+            ofxObjectLight bufLight;
+            bufLight.setPos(180+i*MIR_X_ANG, j*MIR_Y_ANG, RADIUS);
+            v_ObjectLight.push_back(bufLight);
+        }
+    }
 
     
     
@@ -171,6 +186,13 @@ void ofApp::update(){
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), ofVec3f(-1000, -00, 700));
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
+    for(int i = 0; i<v_ObjectHuman.size(); i++){
+        v_ObjectHuman[i].update();
+    }
+    for(int i = 0; i<v_ObjectLight.size(); i++){
+        v_ObjectLight[i].update();
+    }
+
     //cout<<atan(1.0)/PI<<endl;
     //cout<<atan(-2.0)/PI<<endl;
     //cam.setPosition(testLight.getPosition()+ 2*cam.getLookAtDir()*cam.getImagePlaneDistance());
@@ -227,10 +249,17 @@ void ofApp::draw(){
     for(int i = 0; i<v_ObjectMirror.size(); i++){
         v_ObjectMirror[i].draw();
     }
+    for(int i = 0; i<v_ObjectHuman.size(); i++){
+        v_ObjectHuman[i].draw();
+    }
 	
     
 	//ofDrawSphere(0,-300,0,10000);
 	materialPlane.end();
+    
+    for(int i = 0; i<v_ObjectLight.size(); i++){
+        v_ObjectLight[i].draw();
+    }
 	if(!b_TestLight)areaLight.draw();
     if(b_TestLight)testLight.draw();
 

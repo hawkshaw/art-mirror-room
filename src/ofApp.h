@@ -2,6 +2,9 @@
 
 #include "ofMain.h"
 #include "ofxObjectMirror.h"
+#include "ofxObjectHuman.h"
+#include "ofxObjectLight.h"
+
 #include "ofxBlur.h"
 #include "ofxPostGlitch.h"
 
@@ -17,42 +20,43 @@
 #define RADIUS 700
 
 class ofApp : public ofBaseApp{
+public:
 
-	public:
-		void setup();
-		void update();
-		void draw();
-
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-		
-        bool b_TestLight;
-        ofLight testLight;
+    void setup();
+    void update();
+    void draw();
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y );
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
     
-		ofLight areaLight;
-		ofPlanePrimitive plane;
+    bool b_TestLight;
+    ofLight testLight;
+    
+    ofLight areaLight;
+    ofPlanePrimitive plane;
     
     ofEasyCam camera2;
     ofEasyCam camera;
-        ofCamera cam;
-		ofMaterial materialPlane;
+    ofCamera cam;
+    ofMaterial materialPlane;
     
     int i_test;
     
-        vector<ofxObjectMirror> v_ObjectMirror;
+    vector<ofxObjectMirror> v_ObjectMirror;
+    vector<ofxObjectHuman> v_ObjectHuman;
+    vector<ofxObjectLight> v_ObjectLight;
     
     ofxBlur blur;
     ofFbo fbo;
-    	ofxPostGlitch	myGlitch;
+    ofxPostGlitch	myGlitch;
     ofFbo			myFbo;
     
     //bool b_Camera;

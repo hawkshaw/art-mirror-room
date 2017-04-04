@@ -3,22 +3,17 @@
  */
 #pragma once
 
-#ifndef __ofxObjectMirror__
-#define __ofxObjectMirror__
+#ifndef __ofxObjectHuman__
+#define __ofxObjectHuman__
 
 #include "ofMain.h"
 #include "ofxObjectParent.h"
 
 
-#define MIRROR_RADIUS 40
-
-
-class ofxObjectMirror :public ofxObjectParent{
+class ofxObjectHuman :public ofxObjectParent{
 public:
-    ofxObjectMirror();
+    ofxObjectHuman();
     void draw();
-    void drawNorm();
-    ofVec3f getMirrorPos(ofVec3f _pos);
     /*
      In this case
      Pan+: to right

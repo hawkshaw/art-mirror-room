@@ -3,22 +3,18 @@
  */
 #pragma once
 
-#ifndef __ofxObjectMirror__
-#define __ofxObjectMirror__
+#ifndef __ofxObjectLight__
+#define __ofxObjectLight__
 
 #include "ofMain.h"
 #include "ofxObjectParent.h"
 
 
-#define MIRROR_RADIUS 40
-
-
-class ofxObjectMirror :public ofxObjectParent{
+class ofxObjectLight :public ofxObjectParent{
 public:
-    ofxObjectMirror();
+    ofxObjectLight();
     void draw();
-    void drawNorm();
-    ofVec3f getMirrorPos(ofVec3f _pos);
+    virtual void setPos(float _f_Pan,float _f_Tilt,float _f_Distance);
     /*
      In this case
      Pan+: to right
@@ -30,6 +26,7 @@ public:
      Yaw+: to right
      */
 private:
+    ofLight light;
 };
 
 
