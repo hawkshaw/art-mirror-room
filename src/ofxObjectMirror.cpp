@@ -28,3 +28,7 @@ ofVec3f ofxObjectMirror::getMirrorPos(ofVec3f _pos){
     distance = vf_NormalVec.x * (_pos.x  - vf_Pos.x) + vf_NormalVec.y * (_pos.y  - vf_Pos.y) + vf_NormalVec.z  * ( _pos.z - vf_Pos.z);
     return _pos - 2 * distance * vf_NormalVec;
 }
+
+ofVec3f ofxObjectMirror::getReflectDir(ofVec3f _pos){
+    return (vf_Pos - getMirrorPos(_pos)).normalize();
+}

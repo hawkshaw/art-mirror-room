@@ -19,6 +19,7 @@ public:
     void draw();
     void drawNorm();
     ofVec3f getMirrorPos(ofVec3f _pos);
+    ofVec3f getReflectDir(ofVec3f _pos);
     /*
      In this case
      Pan+: to right

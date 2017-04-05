@@ -129,16 +129,16 @@ void ofApp::setup(){
         }
     }
     
-    for(int i = -MIR_X_NUM ;i<=MIR_X_NUM/2 ;i++){
-        for(int j = 1 ;j<=MIR_Y_NUM/2 ;j++){
+    for(int i = -(MIR_X_NUM/2) ;i<=(MIR_X_NUM/2) ;i++){
+        for(int j = 1 ;j<=(MIR_Y_NUM/2) ;j++){
             ofxObjectHuman bufHuman;
             bufHuman.setPos(180+i*MIR_X_ANG, -j*MIR_Y_ANG, RADIUS);
             v_ObjectHuman.push_back(bufHuman);
         }
     }
 
-    for(int i = -MIR_X_NUM ;i<=MIR_X_NUM/2 ;i++){
-        for(int j = 0 ;j<=MIR_Y_NUM/2 ;j++){
+    for(int i = -(MIR_X_NUM/2) ;i<=(MIR_X_NUM/2) ;i++){
+        for(int j = 0 ;j<=(MIR_Y_NUM/2) ;j++){
             ofxObjectLight bufLight;
             bufLight.setPos(180+i*MIR_X_ANG, j*MIR_Y_ANG, RADIUS);
             v_ObjectLight.push_back(bufLight);
@@ -181,7 +181,8 @@ void ofApp::update(){
             v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()-v_Camera[i_Camera].getLookAtDir());
         }else{
             //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[i_Camera].getPosition());
-            v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[0].getPosition());
+            //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[0].getPosition());
+            v_ObjectMirror[i].setAngleBetween(v_ObjectHuman[4].getPos(), v_ObjectLight[7].getPos());
         }
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), ofVec3f(-1000, -00, 700));
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
@@ -263,17 +264,21 @@ void ofApp::draw(){
 	if(!b_TestLight)areaLight.draw();
     if(b_TestLight)testLight.draw();
 
-    ofSetColor(200, 200, 200);
-    for(int i = 0; i<v_ObjectMirror.size(); i++){
+    
+    for(int i = 100; i<v_ObjectMirror.size(); i++){
+        ofSetColor(200, 200, 200);
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         
-        v_ObjectMirror[i].drawLineTo(v_Camera[0].getPosition());
+        //v_ObjectMirror[i].drawLineTo(v_Camera[0].getPosition());
+        v_ObjectMirror[i].drawLineTo(v_ObjectHuman[4].getPos());
         //v_ObjectMirror[i].drawLineTo(cam.getPosition());
-        v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
+        //v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
+        v_ObjectMirror[i].drawLineTo(v_ObjectLight[7].getPos());
         ofSetColor(255, 0, 0);
         ofVec3f MirrorPos;
-        MirrorPos = v_ObjectMirror[i].getMirrorPos(areaLight.getPosition());
+        //MirrorPos = v_ObjectMirror[i].getMirrorPos(areaLight.getPosition());
+        MirrorPos = v_ObjectMirror[i].getMirrorPos(v_ObjectLight[7].getPos());
         if(!b_Render){
             v_ObjectMirror[i].drawLineTo(MirrorPos);
             ofDrawSphere(MirrorPos, 10);
@@ -284,9 +289,17 @@ void ofApp::draw(){
         test =v_ObjectMirror[i].getNorm();
         v_ObjectMirror[i].drawLineDir(ofVec3f(test.y*MIRROR_RADIUS*2,-test.x*MIRROR_RADIUS*2,0));
         v_ObjectMirror[i].drawLineDir(ofVec3f(0,-test.z*MIRROR_RADIUS*2,test.y*MIRROR_RADIUS*2));
+        ofSetColor(0, 0, 255);
+        v_ObjectMirror[i].drawLineDir(v_ObjectMirror[i].getReflectDir(v_ObjectLight[i_test].getPos())*RADIUS*2);
     }
 
-    
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
+        ofSetColor(0, 0, 255);
+        v_ObjectMirror[i].drawLineDir(v_ObjectMirror[i].getReflectDir(v_ObjectLight[i_test].getPos())*RADIUS*2);
+    }
+
+
+
     if(i_Camera!=2)cam.draw();
     
     
@@ -394,11 +407,11 @@ void ofApp::keyPressed(int key){
             camera.move(100, 0, 0);
             cam.move(100, 0, 0);
             break;
-        case 'l':
-            i_test += 5;
+        case '2':
+            i_test += 1;
             break;
-        case 'R':
-            i_test -= 5;
+        case '1':
+            i_test -= 1;
             break;
         case 'c':
             //b_Camera = !b_Camera;
