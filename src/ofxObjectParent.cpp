@@ -24,13 +24,21 @@ void ofxObjectParent::set(string s){
 void ofxObjectParent::update(){
 }
 
+void ofxObjectParent::myDrawLine(ofVec3f _pos1,ofVec3f _pos2,int _i_GlowLevel=0,ofColor _penColor = ofColor(255,255,255)){
+    if(_i_GlowLevel){
+    }else{
+    }
+    ofDrawLine(_pos1,_pos2);
+}
+
 void ofxObjectParent::drawLineTo(ofVec3f _pos){
-    ofDrawLine(vf_Pos, _pos);
+    myDrawLine(vf_Pos, _pos,1);
 }
 
 void ofxObjectParent::drawLineDir(ofVec3f _direction){
-    ofDrawLine(vf_Pos, vf_Pos+_direction);
+    myDrawLine(vf_Pos, vf_Pos+_direction,1);
 }
+
 
 //--------------------------------------------------------------
 void ofxObjectParent::setPos(float _f_Pan,float _f_Tilt,float _f_Distance){

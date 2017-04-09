@@ -37,6 +37,8 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    void addPoint(float x, float y, float z);
+    
     bool b_TestLight;
     ofLight testLight;
     
@@ -54,14 +56,24 @@ public:
     vector<ofxObjectHuman> v_ObjectHuman;
     vector<ofxObjectLight> v_ObjectLight;
     
-    ofxBlur blur;
-    ofFbo fbo;
-    ofxPostGlitch	myGlitch;
-    ofFbo			myFbo;
-    
     //bool b_Camera;
     int i_Camera;
     bool b_Render;
     
     vector<ofEasyCam> v_Camera;
+    
+    //light
+    vector <ofVec3f> points;
+    vector <ofVec3f> sizes;
+    ofVbo vbo;
+    //ofShader shader;
+    ofTexture texture;
+    
+    //shader
+    ofShader shaderBlurX;
+    ofShader shaderBlurY;
+    
+    ofFbo fboBlurOnePass;
+    ofFbo fboBlurTwoPass;
+    
 };

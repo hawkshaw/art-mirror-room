@@ -149,20 +149,30 @@ void ofApp::setup(){
     
     ofSetCylinderResolution(24, 1);
     
-    
-    /*
-    //ofBlur
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
-    //blur.setup(ofGetWidth(), ofGetHeight(), 32, .2, 1, 0.5);
-    blur.setup(ofGetWidth(), ofGetHeight(), 32, .6, 4, 5);
-    fbo.allocate(ofGetWidth(), ofGetHeight());
-    */
-    
-    
-    myFbo.allocate(512, 512,GL_RGB);
-    myGlitch.setup(&myFbo);
-    myGlitch.setFx(OFXPOSTGLITCH_GLOW			, true);
-    
+    ofDisableArbTex();
+    ofLoadImage(texture, "dot.png");
+    int   num = 500;
+    float radius = 1000;
+    for(int i = 0; i<num; i++ ) {
+        float theta1 = ofRandom(0, TWO_PI);
+        float theta2 = ofRandom(0, TWO_PI);
+        ofVec3f p;
+        p.x = cos( theta1 ) * cos( theta2 );
+        p.y = sin( theta1 );
+        p.z = cos( theta1 ) * sin( theta2 );
+        p *= radius;
+        addPoint(p.x, p.y, p.z);
+    }
+    int total = (int)points.size();
+    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+    // load the shader
+    //shader.load("shaders_gles/shader");
+    //shader.load("shader");
+    //shader.load("shaders/shader");
+    shaderBlurX.load("shaders_gles/shaderBlurX");
+    shaderBlurY.load("shaders_gles/shaderBlurY");
+    //shadersGL3
 }
 
 //--------------------------------------------------------------
@@ -203,18 +213,26 @@ void ofApp::update(){
     cout<< "camera2 gpos"<<camera2.getPosition() <<endl;
     cout<<"dist cam"<<camera.getDistance()<<endl;
     //camera.setDistance(1.0);
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //fbo.begin();
     
+    
+//    blur.begin();
+    
+    //myFbo.begin();
+
     ofBackground(0,0,0);
 
     //if(!b_Camera)camera.begin();
     //if(b_Camera)cam.begin();
 
+    
+
+    
+    
     v_Camera[i_Camera].begin();
     
     /*switch(i_Camera){
@@ -265,7 +283,7 @@ void ofApp::draw(){
     if(b_TestLight)testLight.draw();
 
     
-    for(int i = 100; i<v_ObjectMirror.size(); i++){
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
         ofSetColor(200, 200, 200);
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
@@ -320,8 +338,11 @@ void ofApp::draw(){
         ofPopStyle();
     }
 
-
-
+    /*
+     ofEnableAlphaBlending();
+    ofSetColor(255, 255,255,100);
+    ofDrawBox(0, 0, 0, 100);
+    */
 
     
     //if(b_Camera)cam.end();
@@ -342,34 +363,57 @@ void ofApp::draw(){
     }*/
 
     
-    myFbo.begin();
-    ofBackground(255,0,0);
-    ofSetColor(255,255,255);
-    ofDrawRectangle(200, 200, 200, 200);
-    myFbo.end();
+    //ofDrawRectangle(200, 200, 20, 20);
+    glDepthMask(GL_FALSE);
     
-    /* Apply effects */
-    myGlitch.generateFx();
+    ofSetColor(255, 100, 90);
     
-    /* draw effected view */
-    //ofSetColor(255);
-    //myFbo.draw(512, 0);
-    /*
-    
-    fbo.end();
-    
-    blur.begin();
-    ofDisableBlendMode();
-    ofBackground(0);
-    fbo.draw(0,0);
-    blur.end();
-    
-    blur.draw();
+    // this makes everything look glowy :)
     ofEnableBlendMode(OF_BLENDMODE_ADD);
-    //fbo.draw(0,0);
-*/
+    ofEnablePointSprites();
+    
+    // bind the shader and camera
+    // everything inside this function
+    // will be effected by the shader/camera
+    //shader.begin();
+    
+    float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
+    
+    shaderBlurY.begin();
+    shaderBlurX.begin();
+    shaderBlurX.setUniform1f("blurAmnt", blur);
+    shaderBlurY.setUniform1f("blurAmnt", blur);
     
     
+    /*
+     v_Camera[i_Camera].begin();
+    texture.bind();
+    vbo.draw(GL_POINTS, 0, (int)points.size());
+    texture.unbind();
+    v_Camera[i_Camera].end();
+    */
+    
+     //shader.end();
+    
+    ofDisablePointSprites();
+    ofDisableBlendMode();
+    ofEnableAlphaBlending();
+    
+    v_Camera[i_Camera].begin();
+    for (unsigned int i=0; i<points.size(); i++) {
+        ofSetColor(255, 80);
+        ofVec3f mid = points[i];
+        mid.normalize();
+        mid *= 300;
+        ofDrawLine(points[i], mid);
+    }
+    v_Camera[i_Camera].end();
+    
+    
+    shaderBlurX.end();
+    shaderBlurY.end();
+    
+    glDepthMask(GL_TRUE);
 
 }
 
@@ -475,4 +519,14 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//--------------------------------------------------------------
+void ofApp::addPoint(float x, float y, float z) {
+    ofVec3f p(x, y, z);
+    points.push_back(p);
+    
+    // we are passing the size in as a normal x position
+    float size = ofRandom(5, 50);
+    sizes.push_back(ofVec3f(size));
 }
