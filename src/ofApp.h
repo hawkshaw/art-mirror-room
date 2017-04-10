@@ -8,6 +8,7 @@
 #include "ofxBlur.h"
 #include "ofxPostGlitch.h"
 
+#include "ofxFboBlur.h"
 
 #define MIR_X_NUM 5
 #define MIR_X_ANG 9*1.5
@@ -76,4 +77,8 @@ public:
     ofFbo fboBlurOnePass;
     ofFbo fboBlurTwoPass;
     
+     ofImage image;
+    
+    ofxFboBlur gpuBlur;
+
 };

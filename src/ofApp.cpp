@@ -149,7 +149,7 @@ void ofApp::setup(){
     
     ofSetCylinderResolution(24, 1);
     
-    ofDisableArbTex();
+    //ofDisableArbTex(); //this method disable shader method
     ofLoadImage(texture, "dot.png");
     int   num = 500;
     float radius = 1000;
@@ -173,6 +173,25 @@ void ofApp::setup(){
     shaderBlurX.load("shaders_gles/shaderBlurX");
     shaderBlurY.load("shaders_gles/shaderBlurY");
     //shadersGL3
+    
+    image.loadImage("img.jpg");
+    fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
+    
+    
+    //FboBlur
+    ofFbo::Settings s;
+    s.width = ofGetWidth();
+    s.height = ofGetHeight();
+    s.internalformat = GL_RGBA;
+    s.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+    s.maxFilter = GL_LINEAR; GL_NEAREST;
+    s.numSamples = 0;
+    s.numColorbuffers = 1;
+    s.useDepth = false;
+    s.useStencil = false;
+    gpuBlur.setup(s, false);
+
+    
 }
 
 //--------------------------------------------------------------
@@ -214,11 +233,21 @@ void ofApp::update(){
     cout<<"dist cam"<<camera.getDistance()<<endl;
     //camera.setDistance(1.0);
 
+    
+    
+    gpuBlur.blurOffset = 130 * ofMap(mouseY, 0, ofGetHeight(), 1, 0, true);
+    //gpuBlur.blurOffset = 15;
+    gpuBlur.blurPasses = 10 * ofMap(mouseX, 0, ofGetWidth(), 0, 1, true);
+    //gpuBlur.blurPasses = 1;
+    gpuBlur.numBlurOverlays = 1;
+    gpuBlur.blurOverlayGain = 255;
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+     float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
     
 //    blur.begin();
     
@@ -246,6 +275,17 @@ void ofApp::draw(){
             cam.begin();
             break;
     }*/
+    shaderBlurX.begin();
+    shaderBlurX.setUniform1f("blurAmnt", blur);
+    
+    ofSetColor(255, 255, 255);
+    image.draw(0, 0);
+    
+    
+    //ofEnableAlphaBlending();
+    ofSetColor(255, 255,255);
+    ofDrawBox(0, 0, 0,100);
+    shaderBlurX.end();
 
 
     
@@ -364,7 +404,7 @@ void ofApp::draw(){
 
     
     //ofDrawRectangle(200, 200, 20, 20);
-    glDepthMask(GL_FALSE);
+    //glDepthMask(GL_FALSE);
     
     ofSetColor(255, 100, 90);
     
@@ -377,21 +417,20 @@ void ofApp::draw(){
     // will be effected by the shader/camera
     //shader.begin();
     
-    float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
+   
     
-    shaderBlurY.begin();
-    shaderBlurX.begin();
-    shaderBlurX.setUniform1f("blurAmnt", blur);
-    shaderBlurY.setUniform1f("blurAmnt", blur);
+    //shaderBlurY.begin();
+        //shaderBlurY.setUniform1f("blurAmnt", blur);
     
     
-    /*
-     v_Camera[i_Camera].begin();
+    
+    
+    v_Camera[i_Camera].begin();
     texture.bind();
     vbo.draw(GL_POINTS, 0, (int)points.size());
     texture.unbind();
     v_Camera[i_Camera].end();
-    */
+    
     
      //shader.end();
     
@@ -399,7 +438,12 @@ void ofApp::draw(){
     ofDisableBlendMode();
     ofEnableAlphaBlending();
     
+
+     gpuBlur.beginDrawScene();
+    ofClear(0, 0, 0, 0);
+    
     v_Camera[i_Camera].begin();
+   
     for (unsigned int i=0; i<points.size(); i++) {
         ofSetColor(255, 80);
         ofVec3f mid = points[i];
@@ -409,11 +453,28 @@ void ofApp::draw(){
     }
     v_Camera[i_Camera].end();
     
+    gpuBlur.endDrawScene();
     
-    shaderBlurX.end();
-    shaderBlurY.end();
     
-    glDepthMask(GL_TRUE);
+    gpuBlur.performBlur();
+    
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); //pre-multiplied alpha
+    gpuBlur.drawBlurFbo();
+
+    
+
+    //ofDisableAlphaBlending();
+    //fboBlurOnePass.begin();
+    
+    
+   
+    //shaderBlurY.end();
+
+    //fboBlurOnePass.end();
+    
+    //fboBlurOnePass.draw(0,0);
+    
+    //glDepthMask(GL_TRUE);
 
 }
 
