@@ -24,7 +24,7 @@ void ofApp::setup(){
     
 	ofEnableLighting();
 	ofEnableDepthTest();
-    
+
     ofSetSmoothLighting(true);
 
     testLight.setup();
@@ -178,14 +178,13 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofEnableAlphaBlending();
+    
     float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
 
     ofBackground(0,0,0);
     v_Camera[i_Camera].begin();
     
-    //ofEnableAlphaBlending();
-    ofSetColor(255, 255,255);
-    ofDrawBox(0, 0, 0,100);
     
     if(b_TestLight){
         testLight.enable();
@@ -197,18 +196,13 @@ void ofApp::draw(){
     
     materialPlane.begin();
 	
-    //plane.draw();
-    //ofDrawBox(-200, 0, 0, 200);
-
     for(int i = 0; i<v_ObjectMirror.size(); i++){
         v_ObjectMirror[i].draw();
     }
     for(int i = 0; i<v_ObjectHuman.size(); i++){
         v_ObjectHuman[i].draw();
     }
-	
     
-	//ofDrawSphere(0,-300,0,10000);
 	materialPlane.end();
     
     for(int i = 0; i<v_ObjectLight.size(); i++){
@@ -263,38 +257,23 @@ void ofApp::draw(){
         ofPopStyle();
     }
 
-    /*
-     ofEnableAlphaBlending();
-    ofSetColor(255, 255,255,100);
-    ofDrawBox(0, 0, 0, 100);
-    */
-    
     v_Camera[i_Camera].end();
     
     
-    ofSetColor(255, 100, 90);
-    
-    // this makes everything look glowy :)
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
-
-    ofDisableBlendMode();
-    ofEnableAlphaBlending();
-    
+    ofSetColor(255, 255, 255,255);//this color is applied to gpuBlur.beginDrawScene();
     gpuBlur.beginDrawScene();
     ofClear(0, 0, 0, 0);
 
     v_Camera[i_Camera].begin();
+    ofSetColor(255, 255, 255,255);
     for(int i = 0; i<v_ObjectMirror.size(); i++){
-        ofSetColor(200, 200, 200);
         v_ObjectMirror[i].drawLineTo(v_ObjectHuman[4].getPos());
         v_ObjectMirror[i].drawLineTo(v_ObjectLight[7].getPos());
     }
     v_Camera[i_Camera].end();
     
     gpuBlur.endDrawScene();
-    
     gpuBlur.performBlur();
-    
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); //pre-multiplied alpha
     gpuBlur.drawBlurFbo();
     
