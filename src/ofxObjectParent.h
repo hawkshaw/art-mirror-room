@@ -13,7 +13,7 @@ public:
     ofxObjectParent();
     void setup();
     void set(string s);
-    void update();
+    void update(int _i_AngleSpeed);
     void myDrawLine(ofVec3f _pos1,ofVec3f _pos2,int _i_GlowLevel, ofColor _penColor );
     void drawLineTo(ofVec3f _pos);
     void drawLineDir(ofVec3f _direction);
@@ -21,6 +21,8 @@ public:
     ofVec3f getPos();
     ofVec3f getNorm();
     void setAngle(float _f_Pan,float _f_Tilt);
+    void setRandomAngle();
+    void moveAngle(float _f_Pan,float _f_Tilt);
     void setNormalVec(ofVec3f _norm);
     void setAngleBetween(ofVec3f _pos1,ofVec3f _pos2);
     /*
@@ -39,6 +41,8 @@ protected:
     float f_PosDistance;
     float f_AnglePan;
     float f_AngleTilt;
+    float f_AnglePanDest;
+    float f_AngleTiltDest;
     ofVec3f vf_NormalVec;
     ofVec3f vf_Pos;
     //float f_PosX;

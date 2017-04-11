@@ -134,7 +134,9 @@ void ofApp::setup(){
     s.useStencil = false;
     gpuBlur.setup(s, false);
 
-    
+    gui.setup();
+    gui.add(pi_AngleSpeed.setup("Angle Speed", 5, 1, 10));
+    b_GuiDraw = false;
 }
 
 //--------------------------------------------------------------
@@ -142,28 +144,32 @@ void ofApp::update(){
 	//areaLight.setPosition(0,-200,0);
     for(int i = 0; i<v_ObjectMirror.size(); i++){
         //cout << i << endl;
-        v_ObjectMirror[i].update();
+        v_ObjectMirror[i].update(pi_AngleSpeed);
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), camera.getPosition());
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), testLight.getPosition() );
         
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), camera.getPosition());
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()+ofVec3f(0,-200,0));
         
+        
+        /*
         if(b_Render){
             v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_ObjectMirror[i].getPos()-v_Camera[i_Camera].getLookAtDir());
         }else{
             //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[i_Camera].getPosition());
             //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), v_Camera[0].getPosition());
             v_ObjectMirror[i].setAngleBetween(v_ObjectHuman[4].getPos(), v_ObjectLight[7].getPos());
-        }
+        }*/
+        
+        
         //v_ObjectMirror[i].setAngleBetween(areaLight.getPosition(), ofVec3f(-1000, -00, 700));
         //v_ObjectMirror[i].setAngleBetween(testLight.getPosition(), areaLight.getPosition());
     }
     for(int i = 0; i<v_ObjectHuman.size(); i++){
-        v_ObjectHuman[i].update();
+        v_ObjectHuman[i].update(pi_AngleSpeed);
     }
     for(int i = 0; i<v_ObjectLight.size(); i++){
-        v_ObjectLight[i].update();
+        v_ObjectLight[i].update(pi_AngleSpeed);
     }
 
 
@@ -277,6 +283,10 @@ void ofApp::draw(){
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); //pre-multiplied alpha
     gpuBlur.drawBlurFbo();
     
+    if(b_GuiDraw){
+        gui.draw();
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -291,7 +301,13 @@ void ofApp::keyPressed(int key){
         case 'f':
             ofToggleFullscreen();
             break;
+        case 'g':
+            b_GuiDraw = !b_GuiDraw;
+            break;
         case OF_KEY_UP:
+            for(int i = 0; i<v_ObjectMirror.size(); i++){
+                v_ObjectMirror[i].setRandomAngle();
+            }
             break;
         case OF_KEY_DOWN:
             break;

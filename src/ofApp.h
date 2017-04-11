@@ -4,6 +4,7 @@
 #include "ofxObjectMirror.h"
 #include "ofxObjectHuman.h"
 #include "ofxObjectLight.h"
+#include "ofxGui.h"
 
 #include "ofxFboBlur.h"
 
@@ -34,7 +35,8 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-        
+    
+    bool b_GuiDraw;
     bool b_TestLight;
     ofLight testLight;
     
@@ -55,5 +57,9 @@ public:
     vector<ofEasyCam> v_Camera;
     
     ofxFboBlur gpuBlur;
+    
+    ofxPanel gui;
+    ofxIntSlider pi_AngleSpeed;
 
+    
 };

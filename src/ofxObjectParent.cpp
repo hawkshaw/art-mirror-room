@@ -21,7 +21,19 @@ void ofxObjectParent::setup(){
 void ofxObjectParent::set(string s){
 }
 //--------------------------------------------------------------
-void ofxObjectParent::update(){
+void ofxObjectParent::update(int _i_AngleSpeed){
+    if(abs(f_AnglePanDest - f_AnglePan) < 1.0){
+        f_AnglePan = f_AnglePanDest;
+    }
+    if(abs(f_AngleTiltDest - f_AngleTilt) < 1.0){
+        f_AngleTilt = f_AngleTiltDest;
+    }
+    if(f_AnglePanDest != f_AnglePan){
+        f_AnglePan = (f_AnglePanDest + f_AnglePan * _i_AngleSpeed)/ (1 + _i_AngleSpeed);
+    }
+    if(f_AngleTiltDest != f_AngleTilt){
+        f_AngleTilt = (f_AngleTiltDest + f_AngleTilt * _i_AngleSpeed)/ (1 + _i_AngleSpeed);
+    }
 }
 
 void ofxObjectParent::myDrawLine(ofVec3f _pos1,ofVec3f _pos2,int _i_GlowLevel=0,ofColor _penColor = ofColor(255,255,255)){
@@ -62,6 +74,15 @@ ofVec3f ofxObjectParent::getNorm(){
 void ofxObjectParent::setAngle(float _f_Pan,float _f_Tilt){
     f_AnglePan = _f_Pan;
     f_AngleTilt = _f_Tilt;
+}
+//--------------------------------------------------------------
+void ofxObjectParent::setRandomAngle(){
+    moveAngle(ofRandom(-60, 60), ofRandom(-60, 60));
+}
+//--------------------------------------------------------------
+void ofxObjectParent::moveAngle(float _f_Pan,float _f_Tilt){
+    f_AnglePanDest = _f_Pan;
+    f_AngleTiltDest = _f_Tilt;
 }
 //--------------------------------------------------------------
 void ofxObjectParent::setNormalVec(ofVec3f _norm){
