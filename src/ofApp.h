@@ -41,9 +41,6 @@ public:
     ofLight areaLight;
     ofPlanePrimitive plane;
     
-    ofEasyCam camera2;
-    ofEasyCam camera;
-    ofCamera cam;
     ofMaterial materialPlane;
     
     int i_test;
@@ -52,7 +49,6 @@ public:
     vector<ofxObjectHuman> v_ObjectHuman;
     vector<ofxObjectLight> v_ObjectLight;
     
-    //bool b_Camera;
     int i_Camera;
     bool b_Render;
     

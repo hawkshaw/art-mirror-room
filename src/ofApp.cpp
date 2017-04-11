@@ -14,11 +14,8 @@
  /
  y-
  */
-
-
 //--------------------------------------------------------------
 void ofApp::setup(){
-    //b_Camera = false;
     b_Render = false;
     i_Camera = 0;
     i_test = 0;
@@ -97,30 +94,6 @@ void ofApp::setup(){
     }
 
     
-    
-	camera.setFarClip(20000);
-    camera.setPosition(0, 0,0);
-    camera.setDistance(1.0);
-    camera.move(100, 100, 0);
-    camera.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
-    camera.setFov(70);
-    
-    
-    camera2.setFarClip(20000);
-    camera2.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
-    camera2.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
-    camera2.setFov(50);
-    
-    
-    cam.enableOrtho();
-    cam.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0), 0);
-    cam.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
-    cam.setFov(50);
-    cam.setNearClip(0);
-    cam.setFarClip(10000);
-    //cam.setScale(0.3*3, 0.2*3, 1.0);
-    //cam.setScale(3, 2, 10);
-    
     for(int i = -MIR_X_NUM ;i<=MIR_X_NUM ;i++){
         for(int j = 0 ;j<=MIR_Y_NUM ;j++){
             ofxObjectMirror bufMirror;
@@ -144,8 +117,6 @@ void ofApp::setup(){
             v_ObjectLight.push_back(bufLight);
         }
     }
-
-    
     
     ofSetCylinderResolution(24, 1);
     
@@ -195,18 +166,7 @@ void ofApp::update(){
         v_ObjectLight[i].update();
     }
 
-    //cout<<atan(1.0)/PI<<endl;
-    //cout<<atan(-2.0)/PI<<endl;
-    //cam.setPosition(testLight.getPosition()+ 2*cam.getLookAtDir()*cam.getImagePlaneDistance());
-    cout<< "look dir"<<cam.getLookAtDir() <<endl;
-    cout<< "cam gpos"<<cam.getPosition() <<endl;
-    cout<< "camera gpos"<<camera.getPosition() <<endl;
-    cout<< "camera2 gpos"<<camera2.getPosition() <<endl;
-    cout<<"dist cam"<<camera.getDistance()<<endl;
-    //camera.setDistance(1.0);
 
-    
-    
     gpuBlur.blurOffset = 130 * ofMap(mouseY, 0, ofGetHeight(), 1, 0, true);
     gpuBlur.blurOffset = 4;
     gpuBlur.blurPasses = 10 * ofMap(mouseX, 0, ofGetWidth(), 0, 1, true);
@@ -218,36 +178,11 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-     float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
-    
-//    blur.begin();
-    
-    //myFbo.begin();
+    float blur = ofMap(mouseX, 0, ofGetWidth(), 0, 10, true);
 
     ofBackground(0,0,0);
-
-    //if(!b_Camera)camera.begin();
-    //if(b_Camera)cam.begin();
-
-    
-
-    
-    
     v_Camera[i_Camera].begin();
     
-    /*switch(i_Camera){
-        case 0:
-            camera.begin();
-            break;
-        case 1:
-            camera2.begin();
-            break;
-        case 2:
-            cam.begin();
-            break;
-    }*/
-
     //ofEnableAlphaBlending();
     ofSetColor(255, 255,255);
     ofDrawBox(0, 0, 0,100);
@@ -259,7 +194,6 @@ void ofApp::draw(){
         testLight.disable();
         areaLight.enable();
     }
-    
     
     materialPlane.begin();
 	
@@ -311,11 +245,7 @@ void ofApp::draw(){
         v_ObjectMirror[i].drawLineDir(v_ObjectMirror[i].getReflectDir(v_ObjectLight[i_test].getPos())*RADIUS*2);
     }
 
-
-
-    if(i_Camera!=2)cam.draw();
-    
-    
+ 
     for(int i=0;i<v_Camera.size();i++){
         ofSetColor(255,0,0);
         ofPushStyle();
@@ -338,39 +268,18 @@ void ofApp::draw(){
     ofSetColor(255, 255,255,100);
     ofDrawBox(0, 0, 0, 100);
     */
-
-    
-    //if(b_Camera)cam.end();
-    //if(!b_Camera)camera.end();
     
     v_Camera[i_Camera].end();
     
-    /*switch(i_Camera){
-        case 0:
-            camera.end();
-            break;
-        case 1:
-            camera2.end();
-            break;
-        case 2:
-            cam.end();
-            break;
-    }*/
-
-    
-    //ofDrawRectangle(200, 200, 20, 20);
-    //glDepthMask(GL_FALSE);
     
     ofSetColor(255, 100, 90);
     
     // this makes everything look glowy :)
     ofEnableBlendMode(OF_BLENDMODE_ADD);
-    
-    
+
     ofDisableBlendMode();
     ofEnableAlphaBlending();
     
-
     gpuBlur.beginDrawScene();
     ofClear(0, 0, 0, 0);
 
@@ -404,26 +313,12 @@ void ofApp::keyPressed(int key){
             ofToggleFullscreen();
             break;
         case OF_KEY_UP:
-            //testLight.move(20,0,0);
-            //cam.move(0, 100, 0);
-            camera.move(0, 100, 0);
-            cam.rotate(1, ofVec3f(0, 0,1));
             break;
         case OF_KEY_DOWN:
-            //testLight.move(-20,0,0);
-            //cam.move(0, -100, 0);
-            camera.move(0, -100, 0);
-            cam.rotate(-1, ofVec3f(0, 0,1));
             break;
         case OF_KEY_LEFT:
-            //areaLight.rotate(1,0,0,1);
-            camera.move(-100, 0, 0);
-            cam.move(-100, 0, 0);
             break;
         case OF_KEY_RIGHT:
-            //areaLight.rotate(-1,0,0,1);
-            camera.move(100, 0, 0);
-            cam.move(100, 0, 0);
             break;
         case '2':
             i_test += 1;
