@@ -149,34 +149,6 @@ void ofApp::setup(){
     
     ofSetCylinderResolution(24, 1);
     
-    //ofDisableArbTex(); //this method disable shader method
-    ofLoadImage(texture, "dot.png");
-    int   num = 500;
-    float radius = 1000;
-    for(int i = 0; i<num; i++ ) {
-        float theta1 = ofRandom(0, TWO_PI);
-        float theta2 = ofRandom(0, TWO_PI);
-        ofVec3f p;
-        p.x = cos( theta1 ) * cos( theta2 );
-        p.y = sin( theta1 );
-        p.z = cos( theta1 ) * sin( theta2 );
-        p *= radius;
-        addPoint(p.x, p.y, p.z);
-    }
-    int total = (int)points.size();
-    vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
-    vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
-    // load the shader
-    //shader.load("shaders_gles/shader");
-    //shader.load("shader");
-    //shader.load("shaders/shader");
-    shaderBlurX.load("shaders_gles/shaderBlurX");
-    shaderBlurY.load("shaders_gles/shaderBlurY");
-    //shadersGL3
-    
-    image.loadImage("img.jpg");
-    fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
-    
     
     //FboBlur
     ofFbo::Settings s;
@@ -236,9 +208,9 @@ void ofApp::update(){
     
     
     gpuBlur.blurOffset = 130 * ofMap(mouseY, 0, ofGetHeight(), 1, 0, true);
-    //gpuBlur.blurOffset = 15;
+    gpuBlur.blurOffset = 4;
     gpuBlur.blurPasses = 10 * ofMap(mouseX, 0, ofGetWidth(), 0, 1, true);
-    //gpuBlur.blurPasses = 1;
+    gpuBlur.blurPasses = 9.5;
     gpuBlur.numBlurOverlays = 1;
     gpuBlur.blurOverlayGain = 255;
     
@@ -275,21 +247,10 @@ void ofApp::draw(){
             cam.begin();
             break;
     }*/
-    shaderBlurX.begin();
-    shaderBlurX.setUniform1f("blurAmnt", blur);
-    
-    ofSetColor(255, 255, 255);
-    image.draw(0, 0);
-    
-    
+
     //ofEnableAlphaBlending();
     ofSetColor(255, 255,255);
     ofDrawBox(0, 0, 0,100);
-    shaderBlurX.end();
-
-
-    
-    
     
     if(b_TestLight){
         testLight.enable();
@@ -324,15 +285,9 @@ void ofApp::draw(){
 
     
     for(int i = 0; i<v_ObjectMirror.size(); i++){
-        ofSetColor(200, 200, 200);
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
-        
         //v_ObjectMirror[i].drawLineTo(v_Camera[0].getPosition());
-        v_ObjectMirror[i].drawLineTo(v_ObjectHuman[4].getPos());
-        //v_ObjectMirror[i].drawLineTo(cam.getPosition());
-        //v_ObjectMirror[i].drawLineTo(areaLight.getPosition());
-        v_ObjectMirror[i].drawLineTo(v_ObjectLight[7].getPos());
         ofSetColor(255, 0, 0);
         ofVec3f MirrorPos;
         //MirrorPos = v_ObjectMirror[i].getMirrorPos(areaLight.getPosition());
@@ -410,72 +365,30 @@ void ofApp::draw(){
     
     // this makes everything look glowy :)
     ofEnableBlendMode(OF_BLENDMODE_ADD);
-    ofEnablePointSprites();
-    
-    // bind the shader and camera
-    // everything inside this function
-    // will be effected by the shader/camera
-    //shader.begin();
-    
-   
-    
-    //shaderBlurY.begin();
-        //shaderBlurY.setUniform1f("blurAmnt", blur);
     
     
-    
-    
-    v_Camera[i_Camera].begin();
-    texture.bind();
-    vbo.draw(GL_POINTS, 0, (int)points.size());
-    texture.unbind();
-    v_Camera[i_Camera].end();
-    
-    
-     //shader.end();
-    
-    ofDisablePointSprites();
     ofDisableBlendMode();
     ofEnableAlphaBlending();
     
 
-     gpuBlur.beginDrawScene();
+    gpuBlur.beginDrawScene();
     ofClear(0, 0, 0, 0);
-    
+
     v_Camera[i_Camera].begin();
-   
-    for (unsigned int i=0; i<points.size(); i++) {
-        ofSetColor(255, 80);
-        ofVec3f mid = points[i];
-        mid.normalize();
-        mid *= 300;
-        ofDrawLine(points[i], mid);
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
+        ofSetColor(200, 200, 200);
+        v_ObjectMirror[i].drawLineTo(v_ObjectHuman[4].getPos());
+        v_ObjectMirror[i].drawLineTo(v_ObjectLight[7].getPos());
     }
     v_Camera[i_Camera].end();
     
     gpuBlur.endDrawScene();
     
-    
     gpuBlur.performBlur();
     
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); //pre-multiplied alpha
     gpuBlur.drawBlurFbo();
-
     
-
-    //ofDisableAlphaBlending();
-    //fboBlurOnePass.begin();
-    
-    
-   
-    //shaderBlurY.end();
-
-    //fboBlurOnePass.end();
-    
-    //fboBlurOnePass.draw(0,0);
-    
-    //glDepthMask(GL_TRUE);
-
 }
 
 //--------------------------------------------------------------
@@ -580,14 +493,4 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
-}
-
-//--------------------------------------------------------------
-void ofApp::addPoint(float x, float y, float z) {
-    ofVec3f p(x, y, z);
-    points.push_back(p);
-    
-    // we are passing the size in as a normal x position
-    float size = ofRandom(5, 50);
-    sizes.push_back(ofVec3f(size));
 }

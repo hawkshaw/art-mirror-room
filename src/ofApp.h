@@ -5,9 +5,6 @@
 #include "ofxObjectHuman.h"
 #include "ofxObjectLight.h"
 
-#include "ofxBlur.h"
-#include "ofxPostGlitch.h"
-
 #include "ofxFboBlur.h"
 
 #define MIR_X_NUM 5
@@ -37,9 +34,7 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-    
-    void addPoint(float x, float y, float z);
-    
+        
     bool b_TestLight;
     ofLight testLight;
     
@@ -62,22 +57,6 @@ public:
     bool b_Render;
     
     vector<ofEasyCam> v_Camera;
-    
-    //light
-    vector <ofVec3f> points;
-    vector <ofVec3f> sizes;
-    ofVbo vbo;
-    //ofShader shader;
-    ofTexture texture;
-    
-    //shader
-    ofShader shaderBlurX;
-    ofShader shaderBlurY;
-    
-    ofFbo fboBlurOnePass;
-    ofFbo fboBlurTwoPass;
-    
-     ofImage image;
     
     ofxFboBlur gpuBlur;
 
