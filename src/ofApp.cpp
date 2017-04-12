@@ -117,6 +117,9 @@ void ofApp::setup(){
             v_ObjectLight.push_back(bufLight);
         }
     }
+    for(int i = 0; i<v_ObjectMirror.size(); i++){
+        v_ObjectMirror[i].setAngleBetween(v_ObjectHuman[4].getPos(), v_ObjectLight[7].getPos());
+    }
     
     ofSetCylinderResolution(24, 1);
     
@@ -172,6 +175,21 @@ void ofApp::update(){
         v_ObjectLight[i].update(pi_AngleSpeed);
     }
 
+    
+    if(b_UpdateFbo){
+        b_UpdateFbo = false;
+        ofFbo::Settings s;
+        s.width = ofGetWidth();
+        s.height = ofGetHeight();
+        s.internalformat = GL_RGBA;
+        s.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+        s.maxFilter = GL_LINEAR; GL_NEAREST;
+        s.numSamples = 0;
+        s.numColorbuffers = 1;
+        s.useDepth = false;
+        s.useStencil = false;
+        gpuBlur.setup(s, false);
+    }
 
     gpuBlur.blurOffset = 130 * ofMap(mouseY, 0, ofGetHeight(), 1, 0, true);
     gpuBlur.blurOffset = 4;
@@ -222,7 +240,7 @@ void ofApp::draw(){
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(testLight.getPosition());
         //v_ObjectMirror[i].drawLineTo(v_Camera[0].getPosition());
-        ofSetColor(255, 0, 0);
+        ofSetColor(0, 255, 0);
         ofVec3f MirrorPos;
         //MirrorPos = v_ObjectMirror[i].getMirrorPos(areaLight.getPosition());
         MirrorPos = v_ObjectMirror[i].getMirrorPos(v_ObjectLight[7].getPos());
@@ -236,11 +254,6 @@ void ofApp::draw(){
         test =v_ObjectMirror[i].getNorm();
         v_ObjectMirror[i].drawLineDir(ofVec3f(test.y*MIRROR_RADIUS*2,-test.x*MIRROR_RADIUS*2,0));
         v_ObjectMirror[i].drawLineDir(ofVec3f(0,-test.z*MIRROR_RADIUS*2,test.y*MIRROR_RADIUS*2));
-        ofSetColor(0, 0, 255);
-        v_ObjectMirror[i].drawLineDir(v_ObjectMirror[i].getReflectDir(v_ObjectLight[i_test].getPos())*RADIUS*2);
-    }
-
-    for(int i = 0; i<v_ObjectMirror.size(); i++){
         ofSetColor(0, 0, 255);
         v_ObjectMirror[i].drawLineDir(v_ObjectMirror[i].getReflectDir(v_ObjectLight[i_test].getPos())*RADIUS*2);
     }
@@ -300,6 +313,7 @@ void ofApp::keyPressed(int key){
             break;
         case 'f':
             ofToggleFullscreen();
+            b_UpdateFbo = true;
             break;
         case 'g':
             b_GuiDraw = !b_GuiDraw;

@@ -14,7 +14,6 @@ public:
     void setup();
     void set(string s);
     void update(int _i_AngleSpeed);
-    void myDrawLine(ofVec3f _pos1,ofVec3f _pos2,int _i_GlowLevel, ofColor _penColor );
     void drawLineTo(ofVec3f _pos);
     void drawLineDir(ofVec3f _direction);
     virtual void setPos(float _f_Pan,float _f_Tilt,float _f_Distance);
