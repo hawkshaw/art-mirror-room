@@ -85,7 +85,7 @@ void ofxObjectParent::setAngle(float _f_Pan,float _f_Tilt){
 }
 //--------------------------------------------------------------
 void ofxObjectParent::setRandomAngle(){
-    moveAngle(ofRandom(-10, 10), ofRandom(-10, 10));
+    moveAngle(f_PosPan + ofRandom(-10, 10), f_PosTilt + ofRandom(-10, 10));
 }
 //--------------------------------------------------------------
 void ofxObjectParent::moveAngle(float _f_Pan,float _f_Tilt){
@@ -120,6 +120,39 @@ void ofxObjectParent::setNormalVec(ofVec3f _norm){
     f_AngleTiltDest = f_AngleTilt;
     f_AnglePanDest = f_AnglePan;
 }
+
+//--------------------------------------------------------------
+ofVec3f ofxObjectParent::convPanTilt2Vec(float _f_Pan,float _f_Tilt){
+    ofVec3f out;
+    out.x = cos(PI * _f_Tilt / 180.0) * sin(PI * _f_Pan / 180.0);
+    out.y = cos(PI * _f_Tilt / 180.0) * cos(PI * _f_Pan / 180.0);
+    out.z = sin(PI * _f_Tilt / 180.0);
+    return out;
+}
+//--------------------------------------------------------------
+ofVec2f ofxObjectParent::convVec2PanTilt(ofVec3f _norm){
+    float _f_AnglePan,_f_AngleTilt;
+    if(_norm.y==0){
+        _f_AnglePan = 90.0;
+    }else{
+        if(_norm.y > 0){
+            _f_AnglePan = 180.0 * atan(_norm.x / _norm.y) / PI;
+        }else{
+            if(_norm.x > 0){
+                _f_AnglePan = 180 + 180.0 * atan(_norm.x / _norm.y) / PI;
+            }else{
+                _f_AnglePan = 180.0 * atan(_norm.x / _norm.y) / PI - 180;
+            }
+        }
+    }
+    if((_norm.y ==0) and (_norm.x == 0)){
+        _f_AngleTilt = 90.0;
+    }else{
+        _f_AngleTilt = 180.0 * atan(_norm.z / ofVec2f(_norm.x,_norm.y).length()) / PI;
+    }
+    return ofVec2f(_f_AnglePan,_f_AngleTilt);
+}
+
 //--------------------------------------------------------------
 void ofxObjectParent::setAngleBetween(ofVec3f _pos1,ofVec3f _pos2){
     //鏡の法線を定める

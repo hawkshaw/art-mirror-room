@@ -44,6 +44,7 @@ public:
     ofPlanePrimitive plane;
     
     ofMaterial materialPlane;
+    ofMaterial materialPlaneBlack;
     
     int i_test;
     

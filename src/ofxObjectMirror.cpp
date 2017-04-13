@@ -5,14 +5,24 @@ ofxObjectMirror::ofxObjectMirror(){
 }
 
 //--------------------------------------------------------------
-void ofxObjectMirror::draw(){
+void ofxObjectMirror::draw(bool _b_Render, ofVec3f _cameraPos,ofVec3f _cameraDir){
     ofPushMatrix();
     ofPushStyle();
     ofSetColor(255, 255, 255);
     ofTranslate(vf_Pos);
-    ofRotateZ(-f_AnglePan);
-    ofRotateX(f_AngleTilt);
-    //ofDrawCircle(0,0,0,40);
+    
+    if(_b_Render){
+        ofVec3f vf_ReflectNormed;
+        vf_ReflectNormed = getReflectDir(_cameraPos);
+        ofVec2f vf_RotateBuf;
+        vf_RotateBuf = convVec2PanTilt( vf_ReflectNormed + (- _cameraDir));
+        ofRotateZ(- vf_RotateBuf[0]);
+        ofRotateX(vf_RotateBuf[1]);
+    }else{
+        ofRotateZ(-f_AnglePan);
+        ofRotateX(f_AngleTilt);
+        //ofDrawCircle(0,0,0,40);
+    }
     ofDrawCylinder(0, 0, 0, MIRROR_RADIUS, 1);
     ofPopStyle();
     ofPopMatrix();

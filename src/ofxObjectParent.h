@@ -34,6 +34,9 @@ public:
      Pitch+: go up
      Yaw+: to right
      */
+    ofVec3f convPanTilt2Vec(float _f_Pan,float _f_Tilt);
+    ofVec2f convVec2PanTilt(ofVec3f _vec);
+
 protected:
     float f_PosPan;
     float f_PosTilt;

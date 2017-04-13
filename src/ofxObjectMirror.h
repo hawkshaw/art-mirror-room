@@ -16,7 +16,7 @@
 class ofxObjectMirror :public ofxObjectParent{
 public:
     ofxObjectMirror();
-    void draw();
+    void draw(bool _b_Render, ofVec3f _cameraPos, ofVec3f _cameraDir);
     void drawNorm();
     ofVec3f getMirrorPos(ofVec3f _pos);
     ofVec3f getReflectDir(ofVec3f _pos);
