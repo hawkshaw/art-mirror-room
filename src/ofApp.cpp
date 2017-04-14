@@ -71,7 +71,7 @@ void ofApp::setup(){
     
     
     {
-        ofEasyCam camBuf;
+        ofxObjectCamera camBuf;
         camBuf.setFarClip(20000);
         camBuf.setPosition(0, 0,0);
         camBuf.setDistance(1.0);
@@ -81,7 +81,7 @@ void ofApp::setup(){
         v_Camera.push_back(camBuf);
     }
     {
-        ofEasyCam camBuf;
+        ofxObjectCamera camBuf;
         camBuf.setFarClip(20000);
         camBuf.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
         camBuf.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
@@ -89,13 +89,14 @@ void ofApp::setup(){
         v_Camera.push_back(camBuf);
     }
     {
-        ofEasyCam camBuf;
-        camBuf.enableOrtho();
+        ofxObjectCamera camBuf;
+        //camBuf.enableOrtho();
         camBuf.setPosition(RADIUS/sqrt(2.0), -RADIUS/sqrt(2.0),0);
         camBuf.lookAt(ofVec3f(0,RADIUS,0), ofVec3f(0,0,1));
         camBuf.setFov(50);
-        camBuf.setNearClip(0);
-        camBuf.setFarClip(10000);
+        //camBuf.setNearClip(0);
+        camBuf.setFarClip(20000);
+        camBuf.setAutoMove();
         v_Camera.push_back(camBuf);
     }
 
@@ -179,6 +180,9 @@ void ofApp::update(){
     }
     for(int i = 0; i<v_ObjectLight.size(); i++){
         v_ObjectLight[i].update(pi_AngleSpeed);
+    }
+    for(int i = 0; i<v_Camera.size(); i++){
+        v_Camera[i].update();
     }
 
     

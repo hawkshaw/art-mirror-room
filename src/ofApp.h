@@ -4,6 +4,7 @@
 #include "ofxObjectMirror.h"
 #include "ofxObjectHuman.h"
 #include "ofxObjectLight.h"
+#include "ofxObjectCamera.h"
 #include "ofxGui.h"
 
 #include "ofxFboBlur.h"
@@ -55,7 +56,7 @@ public:
     int i_Camera;
     bool b_Render;
     
-    vector<ofEasyCam> v_Camera;
+    vector<ofxObjectCamera> v_Camera;
     
     ofxFboBlur gpuBlur;
     
